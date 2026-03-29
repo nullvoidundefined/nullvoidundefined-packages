@@ -21,7 +21,7 @@ const isAuto = process.argv.includes("--auto");
 const isDryRun = process.argv.includes("--dry-run");
 const skipInstall = process.argv.includes("--skip-install");
 
-const PKG_NAME = "@nullvoidundefined/formatting-configs";
+const PKG_NAME = "@null_void_undefined/formatting-configs";
 
 const SCRIPTS_TO_ADD = {
     format: 'prettier --write "**/*.{js,jsx,ts,tsx,json,css,scss,md}"',
