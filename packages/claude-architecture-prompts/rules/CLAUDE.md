@@ -14,6 +14,7 @@ This directory contains standardized architecture and coding conventions for ful
 | `CLAUDE-STYLING.md` | Any frontend styling work | SCSS modules, CSS custom properties, responsive, typography |
 | `CLOUD-DEPLOYMENT.md` | Any deployment task | Deploy workflow, env var management, secrets, staging vs production |
 | `CLAUDE-MULTI-REPO.md` | Work spanning multiple repos or using parallel agents | Audit-first workflow, prompt minimization, agent batching |
+| `CLAUDE-SPEC-TO-BUILD.md` | Starting a new application build from a spec | Task decomposition, TDD process, model routing, feasibility assessment |
 
 **Quick reference — which file applies:**
 - Writing a React component or page → `CLAUDE-FRONTEND.md` + `CLAUDE-STYLING.md`
@@ -22,6 +23,7 @@ This directory contains standardized architecture and coding conventions for ful
 - Adding or changing a DB table or migration → `CLAUDE-DATABASE.md`
 - Deploying services, setting env vars, or configuring storage → `CLOUD-DEPLOYMENT.md`
 - Applying a change across multiple repos or spawning parallel agents → `CLAUDE-MULTI-REPO.md`
+- Kicking off a new app build from a spec → `CLAUDE-SPEC-TO-BUILD.md`
 
 ## Stack
 
