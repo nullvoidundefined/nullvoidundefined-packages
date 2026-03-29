@@ -1,0 +1,48 @@
+{
+    "name": "@nullvoidundefined/formatting-configs",
+    "version": "1.0.0",
+    "description": "Canonical Prettier and ESLint configs for @nullvoidundefined projects",
+    "type": "module",
+    "bin": {
+        "formatting-configs": "./bin/cli.js"
+    },
+    "files": [
+        "bin/",
+        "configs/"
+    ],
+    "scripts": {
+        "postinstall": "node bin/cli.js --auto"
+    },
+    "peerDependencies": {
+        "@babel/eslint-parser": ">=7",
+        "@trivago/prettier-plugin-sort-imports": ">=4",
+        "@typescript-eslint/parser": ">=8",
+        "eslint": ">=9 <10",
+        "eslint-config-prettier": ">=10",
+        "eslint-plugin-jsx-a11y": ">=6",
+        "eslint-plugin-react": ">=7",
+        "eslint-plugin-react-hooks": ">=5",
+        "eslint-plugin-security": ">=3",
+        "eslint-plugin-unused-imports": ">=4",
+        "globals": ">=15",
+        "prettier": ">=3",
+        "typescript-eslint": ">=8"
+    },
+    "peerDependenciesMeta": {
+        "@babel/eslint-parser": { "optional": true },
+        "eslint-plugin-jsx-a11y": { "optional": true },
+        "eslint-plugin-react": { "optional": true },
+        "eslint-plugin-react-hooks": { "optional": true }
+    },
+    "keywords": [
+        "prettier",
+        "eslint",
+        "formatting",
+        "config"
+    ],
+    "author": "nullvoidundefined",
+    "license": "MIT",
+    "engines": {
+        "node": ">=18"
+    }
+}

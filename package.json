@@ -1,0 +1,9 @@
+{
+    "name": "@nullvoidundefined/packages",
+    "private": true,
+    "type": "module",
+    "scripts": {},
+    "engines": {
+        "node": ">=18"
+    }
+}

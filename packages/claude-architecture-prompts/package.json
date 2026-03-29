@@ -1,0 +1,27 @@
+{
+    "name": "@nullvoidundefined/claude-architecture-prompts",
+    "version": "1.0.0",
+    "description": "Canonical Claude architecture prompt files for @nullvoidundefined projects",
+    "type": "module",
+    "bin": {
+        "claude-architecture-prompts": "./bin/cli.js"
+    },
+    "files": [
+        "bin/",
+        "rules/"
+    ],
+    "scripts": {
+        "postinstall": "node bin/cli.js --auto"
+    },
+    "keywords": [
+        "claude",
+        "architecture",
+        "prompts",
+        "conventions"
+    ],
+    "author": "nullvoidundefined",
+    "license": "MIT",
+    "engines": {
+        "node": ">=18"
+    }
+}
