@@ -45,6 +45,19 @@ Before spawning a parallel agent:
 
 ---
 
+## Model Selection for Agents
+
+Not every agent needs the most powerful model. Match model capability to task complexity:
+
+| Task Type | Recommended Model | Examples |
+|-----------|------------------|----------|
+| Mechanical / repetitive | Sonnet (or equivalent fast model) | Copy a pattern to another repo, add a CI config file, rename imports, apply a known fix |
+| Deep reasoning | Opus (or equivalent capable model) | Architecture decisions, complex refactoring, debugging test failures, designing new abstractions |
+
+**Default to the cheaper model.** If the agent's job is "copy this file, change these 3 values," that does not require top-tier reasoning. Reserve the most capable model for tasks where the agent needs to make judgment calls, understand complex interactions, or debug non-obvious failures.
+
+---
+
 ## Common Pitfalls
 
 | Pitfall | Cost | Fix |
@@ -55,3 +68,4 @@ Before spawning a parallel agent:
 | Assuming directory structure without checking | Worktree failures, wrong paths, wasted retries | `ls` and `git status` before launching |
 | Not reading TODO/task status before starting | Redoing completed tasks | Single audit pass first |
 | Retrying failed operations without diagnosing | Same failure repeated | Check root cause (not a git repo, file doesn't exist, etc.) before retry |
+| Using the most capable model for every agent | Unnecessary token cost on mechanical tasks | Use Sonnet for copy/paste pattern work, Opus for reasoning-heavy tasks |
