@@ -1,16 +1,15 @@
 #!/usr/bin/env node
 
-import { existsSync, copyFileSync, mkdirSync, readFileSync, readdirSync, renameSync } from "node:fs";
+import { existsSync, copyFileSync, mkdirSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { createInterface } from "node:readline";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const RULES_DIR = resolve(__dirname, "..", "rules");
-const TARGET_DIR_NAME = ".claude";
+const TARGET_DIR = join(".claude", "bottomlessmargaritas");
 
-const isAuto = process.argv.includes("--auto");
 const isDryRun = process.argv.includes("--dry-run");
+const PKG_NAME = "@bottomlessmargaritas/claude-architecture-prompts";
 
 function findProjectRoot(startDir) {
     let dir = startDir;
@@ -23,49 +22,32 @@ function findProjectRoot(startDir) {
     return null;
 }
 
-function getBackupName(filePath) {
-    const timestamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
-    return `${filePath}.backup-${timestamp}`;
-}
-
-async function prompt(question) {
-    const rl = createInterface({ input: process.stdin, output: process.stdout });
-    return new Promise((resolve) => {
-        rl.question(question, (answer) => {
-            rl.close();
-            resolve(answer.trim().toLowerCase());
-        });
-    });
-}
-
-async function run() {
-    // When running as postinstall inside node_modules, walk up to the consuming project root
+function run() {
     const cwd = process.env.INIT_CWD || process.cwd();
     const projectRoot = findProjectRoot(cwd);
 
     if (!projectRoot) {
-        console.error("@bottomlessmargaritas/claude-architecture-prompts: Could not find project root (no package.json found).");
+        console.error(`${PKG_NAME}: Could not find project root (no package.json found).`);
         process.exit(1);
     }
 
-    const targetDir = join(projectRoot, TARGET_DIR_NAME);
+    const targetDir = join(projectRoot, TARGET_DIR);
     const ruleFiles = readdirSync(RULES_DIR).filter((f) => f.endsWith(".md"));
 
     if (ruleFiles.length === 0) {
-        console.log("@bottomlessmargaritas/claude-architecture-prompts: No rule files found in package.");
+        console.log(`${PKG_NAME}: No rule files found in package.`);
         return;
     }
 
     if (!existsSync(targetDir)) {
         if (isDryRun) {
-            console.log(`[dry-run] Would create directory: ${targetDir}`);
+            console.log(`[dry-run] Would create directory: ${TARGET_DIR}`);
         } else {
             mkdirSync(targetDir, { recursive: true });
         }
     }
 
     let copied = 0;
-    let backed = 0;
     let skipped = 0;
 
     for (const file of ruleFiles) {
@@ -80,70 +62,17 @@ async function run() {
                 skipped++;
                 continue;
             }
-
-            if (isAuto) {
-                // In auto mode (postinstall), back up and overwrite
-                const backupPath = getBackupName(target);
-                if (isDryRun) {
-                    console.log(`[dry-run] Would back up: ${file} → ${backupPath}`);
-                    console.log(`[dry-run] Would overwrite: ${file}`);
-                } else {
-                    renameSync(target, backupPath);
-                    copyFileSync(source, target);
-                    console.log(`  ↪ Backed up existing ${file} → ${backupPath.split("/").pop()}`);
-                }
-                backed++;
-                copied++;
-            } else {
-                // Interactive mode — ask user
-                const answer = await prompt(
-                    `  ${file} already exists and differs. Overwrite? (y/n/d=diff) `,
-                );
-
-                if (answer === "d") {
-                    console.log(`\n--- Package version (new) ---`);
-                    console.log(sourceContent.slice(0, 500) + (sourceContent.length > 500 ? "\n..." : ""));
-                    console.log(`\n--- Existing (current) ---`);
-                    console.log(targetContent.slice(0, 500) + (targetContent.length > 500 ? "\n..." : ""));
-                    console.log();
-
-                    const confirm = await prompt(`  Overwrite ${file}? (y/n) `);
-                    if (confirm !== "y") {
-                        skipped++;
-                        continue;
-                    }
-                } else if (answer !== "y") {
-                    skipped++;
-                    continue;
-                }
-
-                const backupPath = getBackupName(target);
-                if (isDryRun) {
-                    console.log(`[dry-run] Would back up and overwrite: ${file}`);
-                } else {
-                    renameSync(target, backupPath);
-                    copyFileSync(source, target);
-                    console.log(`  ↪ Backed up → ${backupPath.split("/").pop()}`);
-                }
-                backed++;
-                copied++;
-            }
-        } else {
-            if (isDryRun) {
-                console.log(`[dry-run] Would copy: ${file}`);
-            } else {
-                copyFileSync(source, target);
-            }
-            copied++;
         }
+
+        if (isDryRun) {
+            console.log(`[dry-run] Would write: ${TARGET_DIR}/${file}`);
+        } else {
+            copyFileSync(source, target);
+        }
+        copied++;
     }
 
-    console.log(
-        `@bottomlessmargaritas/claude-architecture-prompts: ${copied} copied, ${backed} backed up, ${skipped} skipped → ${targetDir}`,
-    );
+    console.log(`${PKG_NAME}: ${copied} written, ${skipped} unchanged → ${TARGET_DIR}/`);
 }
 
-run().catch((err) => {
-    console.error("@bottomlessmargaritas/claude-architecture-prompts:", err.message);
-    process.exit(1);
-});
+run();

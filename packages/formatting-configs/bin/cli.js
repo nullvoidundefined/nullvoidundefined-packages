@@ -3,31 +3,36 @@
 import {
     existsSync,
     copyFileSync,
-    mkdirSync,
     readFileSync,
     writeFileSync,
     readdirSync,
-    renameSync,
 } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join, resolve, extname, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 import { execSync } from "node:child_process";
-import { createInterface } from "node:readline";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const CONFIGS_DIR = resolve(__dirname, "..", "configs");
 
-const isAuto = process.argv.includes("--auto");
 const isDryRun = process.argv.includes("--dry-run");
 const skipInstall = process.argv.includes("--skip-install");
 
 const PKG_NAME = "@bottomlessmargaritas/formatting-configs";
+const NAMESPACE = "bottomlessmargaritas";
 
+// Namespaced filenames: prettier.config.js → prettier.config.bottomlessmargaritas.js
+function namespacedFileName(file) {
+    const ext = extname(file);
+    const base = basename(file, ext);
+    return `${base}.${NAMESPACE}${ext}`;
+}
+
+// Scripts reference the namespaced config files explicitly
 const SCRIPTS_TO_ADD = {
-    format: 'prettier --write "**/*.{js,jsx,ts,tsx,json,css,scss,md}"',
-    "format:check": 'prettier --check "**/*.{js,jsx,ts,tsx,json,css,scss,md}"',
-    lint: "eslint .",
-    "lint:fix": "eslint . --fix",
+    [`${NAMESPACE}:format`]: `prettier --config ${namespacedFileName("prettier.config.js")} --write "**/*.{js,jsx,ts,tsx,json,css,scss,md}"`,
+    [`${NAMESPACE}:format:check`]: `prettier --config ${namespacedFileName("prettier.config.js")} --check "**/*.{js,jsx,ts,tsx,json,css,scss,md}"`,
+    [`${NAMESPACE}:lint`]: `eslint --config ${namespacedFileName("eslint.config.js")} .`,
+    [`${NAMESPACE}:lint:fix`]: `eslint --config ${namespacedFileName("eslint.config.js")} . --fix`,
 };
 
 const PEER_DEPS = {
@@ -42,7 +47,6 @@ const PEER_DEPS = {
     "typescript-eslint": "^8",
 };
 
-// React-related deps — only installed if project uses React
 const REACT_PEER_DEPS = {
     "@babel/eslint-parser": "^7",
     "eslint-plugin-jsx-a11y": "^6",
@@ -59,11 +63,6 @@ function findProjectRoot(startDir) {
         dir = dirname(dir);
     }
     return null;
-}
-
-function getBackupName(filePath) {
-    const timestamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
-    return `${filePath}.backup-${timestamp}`;
 }
 
 function detectPackageManager(projectRoot) {
@@ -89,25 +88,15 @@ function projectUsesReact(projectRoot) {
     }
 }
 
-async function prompt(question) {
-    const rl = createInterface({ input: process.stdin, output: process.stdout });
-    return new Promise((resolve) => {
-        rl.question(question, (answer) => {
-            rl.close();
-            resolve(answer.trim().toLowerCase());
-        });
-    });
-}
-
-async function copyConfigFiles(projectRoot) {
+function copyConfigFiles(projectRoot) {
     const configFiles = readdirSync(CONFIGS_DIR);
     let copied = 0;
-    let backed = 0;
     let skipped = 0;
 
     for (const file of configFiles) {
         const source = join(CONFIGS_DIR, file);
-        const target = join(projectRoot, file);
+        const targetName = namespacedFileName(file);
+        const target = join(projectRoot, targetName);
 
         if (existsSync(target)) {
             const sourceContent = readFileSync(source, "utf8");
@@ -117,46 +106,23 @@ async function copyConfigFiles(projectRoot) {
                 skipped++;
                 continue;
             }
-
-            if (isAuto) {
-                const backupPath = getBackupName(target);
-                if (!isDryRun) {
-                    renameSync(target, backupPath);
-                    copyFileSync(source, target);
-                    console.log(`  ↪ Backed up existing ${file} → ${backupPath.split("/").pop()}`);
-                }
-                backed++;
-                copied++;
-            } else {
-                const answer = await prompt(`  ${file} already exists and differs. Overwrite? (y/n) `);
-                if (answer !== "y") {
-                    skipped++;
-                    continue;
-                }
-
-                const backupPath = getBackupName(target);
-                if (!isDryRun) {
-                    renameSync(target, backupPath);
-                    copyFileSync(source, target);
-                    console.log(`  ↪ Backed up → ${backupPath.split("/").pop()}`);
-                }
-                backed++;
-                copied++;
-            }
-        } else {
-            if (!isDryRun) {
-                copyFileSync(source, target);
-            }
-            copied++;
         }
+
+        if (isDryRun) {
+            console.log(`[dry-run] Would write: ${targetName}`);
+        } else {
+            copyFileSync(source, target);
+        }
+        copied++;
     }
 
-    console.log(`${PKG_NAME}: ${copied} config(s) copied, ${backed} backed up, ${skipped} unchanged`);
+    console.log(`${PKG_NAME}: ${copied} config(s) written, ${skipped} unchanged`);
 }
 
 function updatePackageJsonScripts(projectRoot) {
     const pkgPath = join(projectRoot, "package.json");
-    const pkg = JSON.parse(readFileSync(pkgPath, "utf8"));
+    const raw = readFileSync(pkgPath, "utf8");
+    const pkg = JSON.parse(raw);
 
     if (!pkg.scripts) {
         pkg.scripts = {};
@@ -171,12 +137,14 @@ function updatePackageJsonScripts(projectRoot) {
     }
 
     if (added > 0) {
-        if (!isDryRun) {
+        if (isDryRun) {
+            console.log(`[dry-run] Would add ${added} script(s) to package.json`);
+        } else {
             writeFileSync(pkgPath, JSON.stringify(pkg, null, 4) + "\n", "utf8");
         }
-        console.log(`${PKG_NAME}: Added ${added} script(s) to package.json (format, format:check, lint, lint:fix)`);
+        console.log(`${PKG_NAME}: Added ${added} namespaced script(s) to package.json`);
     } else {
-        console.log(`${PKG_NAME}: All formatting scripts already present in package.json`);
+        console.log(`${PKG_NAME}: All namespaced scripts already present in package.json`);
     }
 }
 
@@ -205,18 +173,18 @@ function installMissingPeers(projectRoot) {
 
     console.log(`${PKG_NAME}: Installing ${missing.length} missing peer dep(s) with ${pm}...`);
 
-    if (!isDryRun) {
+    if (isDryRun) {
+        console.log(`[dry-run] Would run: ${installCmd}`);
+    } else {
         try {
             execSync(installCmd, { cwd: projectRoot, stdio: "inherit" });
         } catch {
             console.warn(`${PKG_NAME}: Peer dependency install failed. Run manually:\n  ${installCmd}`);
         }
-    } else {
-        console.log(`[dry-run] Would run: ${installCmd}`);
     }
 }
 
-async function run() {
+function run() {
     const cwd = process.env.INIT_CWD || process.cwd();
     const projectRoot = findProjectRoot(cwd);
 
@@ -225,7 +193,7 @@ async function run() {
         process.exit(1);
     }
 
-    await copyConfigFiles(projectRoot);
+    copyConfigFiles(projectRoot);
     updatePackageJsonScripts(projectRoot);
 
     if (!skipInstall) {
@@ -233,7 +201,4 @@ async function run() {
     }
 }
 
-run().catch((err) => {
-    console.error(`${PKG_NAME}:`, err.message);
-    process.exit(1);
-});
+run();
