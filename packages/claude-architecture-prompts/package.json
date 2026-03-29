@@ -1,6 +1,6 @@
 {
     "name": "@bottomlessmargaritas/claude-architecture-prompts",
-    "version": "2.1.0",
+    "version": "2.2.0",
     "description": "Canonical Claude architecture prompt files for @bottomlessmargaritas projects",
     "type": "module",
     "bin": {
