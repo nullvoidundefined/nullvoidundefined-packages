@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { existsSync, copyFileSync, mkdirSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, copyFileSync, mkdirSync, readFileSync, readdirSync, unlinkSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -72,7 +72,26 @@ function run() {
         copied++;
     }
 
-    console.log(`${PKG_NAME}: ${copied} written, ${skipped} unchanged → ${TARGET_DIR}/`);
+    // Remove stale files from previous versions that are no longer in the package
+    const currentFiles = new Set(ruleFiles);
+    let removed = 0;
+
+    if (existsSync(targetDir)) {
+        for (const file of readdirSync(targetDir)) {
+            if (file.endsWith(".md") && !currentFiles.has(file)) {
+                if (isDryRun) {
+                    console.log(`[dry-run] Would remove stale file: ${TARGET_DIR}/${file}`);
+                } else {
+                    unlinkSync(join(targetDir, file));
+                }
+                removed++;
+            }
+        }
+    }
+
+    console.log(
+        `${PKG_NAME}: ${copied} written, ${skipped} unchanged, ${removed} stale removed → ${TARGET_DIR}/`,
+    );
 }
 
 run();

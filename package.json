@@ -1,8 +1,15 @@
 {
-    "name": "@nullvoidundefined/packages",
+    "name": "@bottomlessmargaritas/packages",
     "private": true,
     "type": "module",
-    "scripts": {},
+    "scripts": {
+        "version:patch": "cd packages/claude-architecture-prompts && npm version patch && cd ../formatting-configs && npm version patch",
+        "version:minor": "cd packages/claude-architecture-prompts && npm version minor && cd ../formatting-configs && npm version minor",
+        "version:major": "cd packages/claude-architecture-prompts && npm version major && cd ../formatting-configs && npm version major",
+        "publish:prompts": "cd packages/claude-architecture-prompts && npm publish --access public",
+        "publish:formatting": "cd packages/formatting-configs && npm publish --access public",
+        "publish:all": "npm run publish:prompts && npm run publish:formatting"
+    },
     "engines": {
         "node": ">=18"
     }

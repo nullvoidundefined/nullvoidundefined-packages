@@ -1,6 +1,6 @@
 # Database Conventions
 
-These rules apply to all PostgreSQL schemas, migrations, and database access code across every app in this portfolio. Follow them exactly so every database layer reads as if the same author wrote it.
+These rules apply to all PostgreSQL schemas, migrations, and database access code. Follow them exactly so every database layer reads as if the same author wrote it.
 
 ---
 

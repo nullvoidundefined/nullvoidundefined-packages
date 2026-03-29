@@ -1,6 +1,6 @@
 # Frontend Conventions
 
-These rules apply to all `web-client/` and frontend packages across every app in this portfolio. Follow them exactly so every frontend reads as if the same author wrote it.
+These rules apply to all frontend packages. Follow them exactly so every frontend reads as if the same author wrote it.
 
 ---
 

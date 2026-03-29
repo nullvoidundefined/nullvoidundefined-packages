@@ -6,6 +6,7 @@ import {
     readFileSync,
     writeFileSync,
     readdirSync,
+    unlinkSync,
 } from "node:fs";
 import { dirname, join, resolve, extname, basename } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -90,6 +91,7 @@ function projectUsesReact(projectRoot) {
 
 function copyConfigFiles(projectRoot) {
     const configFiles = readdirSync(CONFIGS_DIR);
+    const currentNamespacedFiles = new Set(configFiles.map(namespacedFileName));
     let copied = 0;
     let skipped = 0;
 
@@ -116,7 +118,22 @@ function copyConfigFiles(projectRoot) {
         copied++;
     }
 
-    console.log(`${PKG_NAME}: ${copied} config(s) written, ${skipped} unchanged`);
+    // Remove stale namespaced config files from previous versions
+    const namespacedPattern = `.${NAMESPACE}.`;
+    let removed = 0;
+
+    for (const file of readdirSync(projectRoot)) {
+        if (file.includes(namespacedPattern) && !currentNamespacedFiles.has(file)) {
+            if (isDryRun) {
+                console.log(`[dry-run] Would remove stale config: ${file}`);
+            } else {
+                unlinkSync(join(projectRoot, file));
+            }
+            removed++;
+        }
+    }
+
+    console.log(`${PKG_NAME}: ${copied} config(s) written, ${skipped} unchanged, ${removed} stale removed`);
 }
 
 function updatePackageJsonScripts(projectRoot) {
@@ -128,23 +145,36 @@ function updatePackageJsonScripts(projectRoot) {
         pkg.scripts = {};
     }
 
+    const currentScriptNames = new Set(Object.keys(SCRIPTS_TO_ADD));
     let added = 0;
+    let removed = 0;
+
+    // Add/update current scripts
     for (const [name, command] of Object.entries(SCRIPTS_TO_ADD)) {
-        if (!pkg.scripts[name]) {
+        if (pkg.scripts[name] !== command) {
             pkg.scripts[name] = command;
             added++;
         }
     }
 
-    if (added > 0) {
+    // Remove stale namespaced scripts from previous versions
+    for (const name of Object.keys(pkg.scripts)) {
+        if (name.startsWith(`${NAMESPACE}:`) && !currentScriptNames.has(name)) {
+            delete pkg.scripts[name];
+            removed++;
+        }
+    }
+
+    if (added > 0 || removed > 0) {
         if (isDryRun) {
-            console.log(`[dry-run] Would add ${added} script(s) to package.json`);
+            if (added > 0) console.log(`[dry-run] Would add/update ${added} script(s) in package.json`);
+            if (removed > 0) console.log(`[dry-run] Would remove ${removed} stale script(s) from package.json`);
         } else {
             writeFileSync(pkgPath, JSON.stringify(pkg, null, 4) + "\n", "utf8");
         }
-        console.log(`${PKG_NAME}: Added ${added} namespaced script(s) to package.json`);
+        console.log(`${PKG_NAME}: ${added} script(s) added/updated, ${removed} stale removed in package.json`);
     } else {
-        console.log(`${PKG_NAME}: All namespaced scripts already present in package.json`);
+        console.log(`${PKG_NAME}: All namespaced scripts already up to date in package.json`);
     }
 }
 

@@ -1,6 +1,6 @@
 # Backend Conventions
 
-These rules apply to all `server/` and API packages across every app in this portfolio. Follow them exactly so every backend reads as if the same author wrote it.
+These rules apply to all backend and API packages. Follow them exactly so every backend reads as if the same author wrote it.
 
 ---
 
@@ -181,7 +181,7 @@ server.listen(port, () => {
 });
 ```
 
-This two-file pattern ensures GCP-managed secrets (`ANTHROPIC_API_KEY`, `SESSION_SECRET`, etc.) are populated in `process.env` before the Anthropic SDK or any other API client is constructed.
+This two-file pattern ensures secrets managed by a secret manager are populated in `process.env` before any API client is constructed.
 
 ---
 
