@@ -1,6 +1,6 @@
 {
     "name": "@bottomlessmargaritas/formatting-configs",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "description": "Canonical Prettier and ESLint configs for @bottomlessmargaritas projects",
     "type": "module",
     "bin": {
@@ -29,10 +29,18 @@
         "typescript-eslint": ">=8"
     },
     "peerDependenciesMeta": {
-        "@babel/eslint-parser": { "optional": true },
-        "eslint-plugin-jsx-a11y": { "optional": true },
-        "eslint-plugin-react": { "optional": true },
-        "eslint-plugin-react-hooks": { "optional": true }
+        "@babel/eslint-parser": {
+            "optional": true
+        },
+        "eslint-plugin-jsx-a11y": {
+            "optional": true
+        },
+        "eslint-plugin-react": {
+            "optional": true
+        },
+        "eslint-plugin-react-hooks": {
+            "optional": true
+        }
     },
     "keywords": [
         "prettier",
