@@ -44,7 +44,7 @@ async function run() {
     const projectRoot = findProjectRoot(cwd);
 
     if (!projectRoot) {
-        console.error("@null_void_undefined/claude-architecture-prompts: Could not find project root (no package.json found).");
+        console.error("@bottomlessmargaritas/claude-architecture-prompts: Could not find project root (no package.json found).");
         process.exit(1);
     }
 
@@ -52,7 +52,7 @@ async function run() {
     const ruleFiles = readdirSync(RULES_DIR).filter((f) => f.endsWith(".md"));
 
     if (ruleFiles.length === 0) {
-        console.log("@null_void_undefined/claude-architecture-prompts: No rule files found in package.");
+        console.log("@bottomlessmargaritas/claude-architecture-prompts: No rule files found in package.");
         return;
     }
 
@@ -139,11 +139,11 @@ async function run() {
     }
 
     console.log(
-        `@null_void_undefined/claude-architecture-prompts: ${copied} copied, ${backed} backed up, ${skipped} skipped → ${targetDir}`,
+        `@bottomlessmargaritas/claude-architecture-prompts: ${copied} copied, ${backed} backed up, ${skipped} skipped → ${targetDir}`,
     );
 }
 
 run().catch((err) => {
-    console.error("@null_void_undefined/claude-architecture-prompts:", err.message);
+    console.error("@bottomlessmargaritas/claude-architecture-prompts:", err.message);
     process.exit(1);
 });

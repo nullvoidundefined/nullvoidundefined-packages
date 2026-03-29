@@ -1,5 +1,5 @@
 {
-    "name": "@null_void_undefined/claude-architecture-prompts",
+    "name": "@bottomlessmargaritas/claude-architecture-prompts",
     "version": "1.0.0",
     "description": "Canonical Claude architecture prompt files for @nullvoidundefined projects",
     "type": "module",

@@ -1,5 +1,5 @@
 {
-    "name": "@null_void_undefined/formatting-configs",
+    "name": "@bottomlessmargaritas/formatting-configs",
     "version": "1.0.0",
     "description": "Canonical Prettier and ESLint configs for @nullvoidundefined projects",
     "type": "module",
