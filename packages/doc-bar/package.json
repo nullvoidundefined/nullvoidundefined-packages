@@ -1,6 +1,6 @@
 {
     "name": "@bottomlessmargaritas/doc-bar",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A nav bar component that links to app documentation modals (summary, technical summary, technical overview, quiz)",
     "type": "module",
     "main": "./dist/index.cjs.js",
@@ -31,12 +31,13 @@
             "import": "./dist/web-component.es.js",
             "require": "./dist/web-component.cjs.js"
         },
-        "./styles.css": "./dist/doc-bar.css"
+        "./styles.css": "./src/styles.css"
     },
     "files": [
         "dist/",
         "src/angular.ts",
         "src/core/",
+        "src/styles.css",
         "application-documentation-prompts/"
     ],
     "scripts": {
@@ -67,14 +68,30 @@
         "@angular/common": ">=14"
     },
     "peerDependenciesMeta": {
-        "react": { "optional": true },
-        "react-dom": { "optional": true },
-        "vue": { "optional": true },
-        "svelte": { "optional": true },
-        "solid-js": { "optional": true },
-        "preact": { "optional": true },
-        "@angular/core": { "optional": true },
-        "@angular/common": { "optional": true }
+        "react": {
+            "optional": true
+        },
+        "react-dom": {
+            "optional": true
+        },
+        "vue": {
+            "optional": true
+        },
+        "svelte": {
+            "optional": true
+        },
+        "solid-js": {
+            "optional": true
+        },
+        "preact": {
+            "optional": true
+        },
+        "@angular/core": {
+            "optional": true
+        },
+        "@angular/common": {
+            "optional": true
+        }
     },
     "devDependencies": {
         "@trivago/prettier-plugin-sort-imports": "^4.3.0",
