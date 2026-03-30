@@ -1,6 +1,6 @@
 {
     "name": "@bottomlessmargaritas/formatting-configs",
-    "version": "2.2.1",
+    "version": "2.2.2",
     "description": "Canonical Prettier and ESLint configs for @bottomlessmargaritas projects",
     "type": "module",
     "bin": {
