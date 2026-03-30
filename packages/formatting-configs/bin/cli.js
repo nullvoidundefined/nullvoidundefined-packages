@@ -30,8 +30,8 @@ function namespacedFileName(file) {
 
 // Scripts reference the namespaced config files explicitly
 const SCRIPTS_TO_ADD = {
-    [`${NAMESPACE}:format`]: `prettier --config ${namespacedFileName("prettier.config.js")} --write "**/*.{js,jsx,ts,tsx,json,css,scss,md}"`,
-    [`${NAMESPACE}:format:check`]: `prettier --config ${namespacedFileName("prettier.config.js")} --check "**/*.{js,jsx,ts,tsx,json,css,scss,md}"`,
+    [`${NAMESPACE}:format`]: `prettier --config ${namespacedFileName("prettier.config.mjs")} --write "**/*.{js,jsx,ts,tsx,json,css,scss,md}"`,
+    [`${NAMESPACE}:format:check`]: `prettier --config ${namespacedFileName("prettier.config.mjs")} --check "**/*.{js,jsx,ts,tsx,json,css,scss,md}"`,
     [`${NAMESPACE}:lint`]: `eslint --config ${namespacedFileName("eslint.config.js")} .`,
     [`${NAMESPACE}:lint:fix`]: `eslint --config ${namespacedFileName("eslint.config.js")} . --fix`,
 };
