@@ -1,4 +1,4 @@
-import { DocBar } from './core/DocBar.js';
+import { DocBar } from './core/DocBar.ts';
 
 /**
  * <app-doc-bar> — a custom element wrapping DocBar.
@@ -17,7 +17,7 @@ import { DocBar } from './core/DocBar.js';
 class AppDocBarElement extends HTMLElement {
   static observedAttributes = ['base-path', 'position', 'fixed', 'app-name', 'theme'];
 
-  #instance = null;
+  #instance: InstanceType<typeof DocBar> | null = null;
 
   connectedCallback() {
     this.#mount();
@@ -41,10 +41,10 @@ class AppDocBarElement extends HTMLElement {
 
     this.#instance = new DocBar({
       basePath: this.getAttribute('base-path') ?? '/.bottomlessmargaritas/application-documentation',
-      position: this.getAttribute('position') ?? 'bottom',
+      position: (this.getAttribute('position') as 'top' | 'bottom') ?? 'bottom',
       fixed,
       appName: this.getAttribute('app-name') ?? '',
-      theme: this.getAttribute('theme') ?? 'dark',
+      theme: (this.getAttribute('theme') as 'dark' | 'light') ?? 'dark',
     });
     this.#instance.mount(this);
   }

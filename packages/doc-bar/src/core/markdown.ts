@@ -1,8 +1,8 @@
-function slugify(text) {
+function slugify(text: string): string {
   return text.toLowerCase().replace(/[^\w]+/g, '-').replace(/^-|-$/g, '');
 }
 
-export function markdownToHtml(md) {
+export function markdownToHtml(md: string): string {
   let html = md;
 
   // Fenced code blocks (must come before inline code)

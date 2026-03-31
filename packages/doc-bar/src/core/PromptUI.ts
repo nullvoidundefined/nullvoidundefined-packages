@@ -1,8 +1,16 @@
 import DOMPurify from 'dompurify';
-import { el } from './dom.js';
-import { PROMPTS, COMBINED_PROMPT } from './prompts.js';
+import { el } from './dom.ts';
+import { PROMPTS, COMBINED_PROMPT } from './prompts.ts';
 
-function createCopyButton(text, label) {
+export interface NavLink {
+  key: string;
+  label: string;
+  file: string;
+}
+
+type PromptReason = 'missing' | 'unversioned' | 'outdated';
+
+function createCopyButton(text: string, label: string): HTMLElement {
   const btn = el('button', 'doc-bar-prompt-copy-btn');
   btn.textContent = label;
   btn.addEventListener('click', () => {
@@ -18,7 +26,7 @@ function createCopyButton(text, label) {
   return btn;
 }
 
-export function buildGenerateUI(basePath, navLinks) {
+export function buildGenerateUI(basePath: string, navLinks: NavLink[]): HTMLElement {
   const wrapper = el('div', 'doc-bar-prompt-view');
 
   const header = el('div', 'doc-bar-prompt-header');
@@ -59,7 +67,12 @@ export function buildGenerateUI(basePath, navLinks) {
   return wrapper;
 }
 
-export function buildPromptUI(key, reason, file, basePath) {
+export function buildPromptUI(
+  key: string,
+  reason: PromptReason,
+  file: string,
+  basePath: string,
+): HTMLElement {
   const prompt = PROMPTS[key];
   const wrapper = el('div', 'doc-bar-prompt-view');
 

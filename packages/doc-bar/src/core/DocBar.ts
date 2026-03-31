@@ -1,21 +1,45 @@
 import DOMPurify from 'dompurify';
-import { markdownToHtml } from './markdown.js';
-import { parseQuiz } from './parseQuiz.js';
-import { DOC_FORMAT_VERSION, parseDocVersion } from './prompts.js';
-import { el, createOverlay, createPanel, createLoadingSkeleton } from './dom.js';
-import { buildQuiz } from './QuizRenderer.js';
-import { buildGenerateUI, buildPromptUI } from './PromptUI.js';
+import { markdownToHtml } from './markdown.ts';
+import { parseQuiz } from './parseQuiz.ts';
+import { DOC_FORMAT_VERSION, parseDocVersion } from './prompts.ts';
+import { el, createOverlay, createPanel, createLoadingSkeleton } from './dom.ts';
+import { buildQuiz } from './QuizRenderer.ts';
+import { buildGenerateUI, buildPromptUI } from './PromptUI.ts';
+import type { NavLink } from './PromptUI.ts';
 
-const NAV_LINKS = [
+export interface DocBarOptions {
+  basePath?: string;
+  position?: 'top' | 'bottom';
+  fixed?: boolean;
+  appName?: string;
+  theme?: 'dark' | 'light';
+}
+
+interface ResolvedOptions {
+  basePath: string;
+  position: 'top' | 'bottom';
+  fixed: boolean;
+  appName: string;
+  theme: 'dark' | 'light';
+}
+
+const NAV_LINKS: readonly NavLink[] = [
   { key: 'summary', label: 'Summary', file: 'summary.md' },
   { key: 'technical-summary', label: 'Technical Summary', file: 'technical-summary.md' },
   { key: 'technical-overview', label: 'Technical Overview', file: 'technical-overview.md' },
   { key: 'quiz', label: 'Quiz', file: 'quiz.md' },
   { key: 'review', label: 'Review', file: 'review.md' },
-];
+] as const;
 
 export class DocBar {
-  constructor(options = {}) {
+  private options: ResolvedOptions;
+  private _container: HTMLElement | null = null;
+  private _modal: HTMLElement | null = null;
+  private _activeBtn: HTMLElement | null = null;
+  private _abortController: AbortController | null = null;
+  private _docsAvailable = false;
+
+  constructor(options: DocBarOptions = {}) {
     this.options = {
       basePath: '/.bottomlessmargaritas/application-documentation',
       position: 'bottom',
@@ -24,25 +48,21 @@ export class DocBar {
       theme: 'dark',
       ...options,
     };
-    this._container = null;
-    this._modal = null;
-    this._activeBtn = null;
-    this._abortController = null;
     this._onKeyDown = this._onKeyDown.bind(this);
   }
 
-  async mount(container) {
+  async mount(container: HTMLElement): Promise<void> {
     this._container = container;
     this._docsAvailable = await this._checkDocs();
     this._renderNav();
   }
 
-  destroy() {
+  destroy(): void {
     this._closeModal();
     if (this._container) this._container.innerHTML = '';
   }
 
-  async _checkDocs() {
+  private async _checkDocs(): Promise<boolean> {
     try {
       const results = await Promise.all(
         NAV_LINKS.map(async ({ file }) => {
@@ -53,19 +73,19 @@ export class DocBar {
             const version = parseDocVersion(text);
             return version !== null && version >= DOC_FORMAT_VERSION;
           } catch (err) {
-            console.warn(`[DocBar] Failed to check ${file}:`, err.message);
+            console.warn(`[DocBar] Failed to check ${file}:`, (err as Error).message);
             return false;
           }
         })
       );
       return results.every(Boolean);
     } catch (err) {
-      console.warn('[DocBar] Failed to check docs:', err.message);
+      console.warn('[DocBar] Failed to check docs:', (err as Error).message);
       return false;
     }
   }
 
-  _renderNav() {
+  private _renderNav(): void {
     const { position, fixed, appName, theme } = this.options;
 
     const nav = el('nav', [
@@ -100,17 +120,22 @@ export class DocBar {
       const btn = el('button', 'doc-bar-link doc-bar-link-generate');
       btn.textContent = 'Generate Documents';
       btn.addEventListener('click', () => this._openModal('Generate Documents', (body) => {
-        body.appendChild(buildGenerateUI(this.options.basePath, NAV_LINKS));
+        body.appendChild(buildGenerateUI(this.options.basePath, NAV_LINKS as NavLink[]));
       }, btn));
       li.appendChild(btn);
       ul.appendChild(li);
     }
 
     nav.appendChild(ul);
-    this._container.appendChild(nav);
+    this._container!.appendChild(nav);
   }
 
-  _openModal(title, renderContent, btn, panelClass = 'doc-bar-panel') {
+  private _openModal(
+    title: string,
+    renderContent: (body: HTMLElement) => void,
+    btn?: HTMLElement,
+    panelClass = 'doc-bar-panel',
+  ): void {
     this._closeModal();
 
     if (btn) {
@@ -131,12 +156,12 @@ export class DocBar {
     document.addEventListener('keydown', this._onKeyDown, { signal: this._abortController.signal });
   }
 
-  async _open(key, title, file, btn) {
+  private async _open(key: string, title: string, file: string, btn: HTMLElement): Promise<void> {
     this._openModal(title, (body) => {
       body.appendChild(createLoadingSkeleton());
     }, btn, key === 'quiz' ? 'doc-bar-panel doc-bar-panel-wide' : 'doc-bar-panel');
 
-    const body = this._modal?.querySelector('.doc-bar-panel-body');
+    const body = this._modal?.querySelector('.doc-bar-panel-body') as HTMLElement | null;
     if (!body) return;
 
     try {
@@ -160,23 +185,23 @@ export class DocBar {
       body.innerHTML = '';
       body.appendChild(key === 'quiz' ? buildQuiz(parseQuiz(text), this.options.appName) : this._buildMarkdown(text));
     } catch (err) {
-      console.warn(`[DocBar] Failed to load ${file}:`, err.message);
+      console.warn(`[DocBar] Failed to load ${file}:`, (err as Error).message);
       body.innerHTML = '';
       body.appendChild(buildPromptUI(key, 'missing', file, this.options.basePath));
     }
   }
 
-  _buildMarkdown(text) {
+  private _buildMarkdown(text: string): HTMLElement {
     const wrapper = el('div', 'doc-bar-md');
     wrapper.innerHTML = DOMPurify.sanitize(markdownToHtml(text), {
       ADD_ATTR: ['target', 'rel'],
     });
 
     wrapper.addEventListener('click', (e) => {
-      const anchor = e.target.closest('a.doc-bar-anchor-link');
+      const anchor = (e.target as HTMLElement).closest('a.doc-bar-anchor-link');
       if (!anchor) return;
       e.preventDefault();
-      const targetId = anchor.getAttribute('href').slice(1);
+      const targetId = anchor.getAttribute('href')!.slice(1);
       const targetEl = wrapper.querySelector(`[id="${targetId}"]`);
       if (targetEl) {
         targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -186,7 +211,7 @@ export class DocBar {
     return wrapper;
   }
 
-  _closeModal() {
+  private _closeModal(): void {
     this._modal?.remove();
     this._modal = null;
     this._activeBtn?.classList.remove('doc-bar-link-active');
@@ -195,7 +220,7 @@ export class DocBar {
     this._abortController = null;
   }
 
-  _onKeyDown(e) {
+  private _onKeyDown(e: KeyboardEvent): void {
     if (e.key === 'Escape') this._closeModal();
   }
 }

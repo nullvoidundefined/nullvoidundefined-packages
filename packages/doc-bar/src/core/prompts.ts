@@ -17,7 +17,7 @@ export const DOC_FORMAT_VERSION = 1;
 
 export const VERSION_COMMENT = `<!-- @bottomlessmargaritas/doc-bar format:${DOC_FORMAT_VERSION} -->`;
 
-export const PROMPTS = {
+export const PROMPTS: Record<string, string> = {
   summary: summaryPrompt,
   'technical-summary': technicalSummaryPrompt,
   'technical-overview': technicalOverviewPrompt,
@@ -77,7 +77,7 @@ ${reviewPrompt}
  * Parses the format version from the first line of a document.
  * Returns the version number, or null if the stamp is missing.
  */
-export function parseDocVersion(text) {
+export function parseDocVersion(text: string): number | null {
   const match = text.match(/^<!--\s*@bottomlessmargaritas\/doc-bar\s+format:(\d+)\s*-->/);
   return match ? parseInt(match[1], 10) : null;
 }

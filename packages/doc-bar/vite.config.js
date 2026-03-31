@@ -19,20 +19,20 @@ const globals = {
 export default defineConfig({
   plugins: [
     // Scope each JSX plugin to its own file to avoid transform conflicts
-    react({ include: /\/react\.jsx$/ }),
-    solid({ include: /\/solid\.jsx$/ }),
+    react({ include: /\/react\.tsx$/ }),
+    solid({ include: /\/solid\.tsx$/ }),
     svelte({ include: /\.svelte$/ }),
   ],
   build: {
     lib: {
       entry: {
-        index: resolve(__dirname, 'src/index.js'),
-        vanilla: resolve(__dirname, 'src/vanilla.js'),
-        vue: resolve(__dirname, 'src/vue.js'),
+        index: resolve(__dirname, 'src/index.ts'),
+        vanilla: resolve(__dirname, 'src/vanilla.ts'),
+        vue: resolve(__dirname, 'src/vue.ts'),
         svelte: resolve(__dirname, 'src/svelte.svelte'),
-        solid: resolve(__dirname, 'src/solid.jsx'),
-        preact: resolve(__dirname, 'src/preact.js'),
-        'web-component': resolve(__dirname, 'src/web-component.js'),
+        solid: resolve(__dirname, 'src/solid.tsx'),
+        preact: resolve(__dirname, 'src/preact.tsx'),
+        'web-component': resolve(__dirname, 'src/web-component.ts'),
       },
     },
     rollupOptions: {

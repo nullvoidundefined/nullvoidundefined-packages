@@ -1,8 +1,15 @@
-import { h } from 'preact';
-import { useEffect, useRef } from 'preact/hooks';
-import { DocBar } from './core/DocBar.js';
+import { useEffect, useRef } from 'react';
+import { DocBar } from './core/DocBar.ts';
 
-export default function AppDocBar(props) {
+export interface AppDocBarProps {
+  basePath?: string;
+  position?: 'top' | 'bottom';
+  fixed?: boolean;
+  appName?: string;
+  theme?: 'dark' | 'light';
+}
+
+export default function AppDocBar(props: AppDocBarProps) {
   const {
     basePath = '/.bottomlessmargaritas/application-documentation',
     position = 'bottom',
@@ -11,7 +18,7 @@ export default function AppDocBar(props) {
     theme = 'dark',
   } = props;
 
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const instance = new DocBar({ basePath, position, fixed, appName, theme });
@@ -19,5 +26,5 @@ export default function AppDocBar(props) {
     return () => instance.destroy();
   }, [basePath, position, fixed, appName, theme]);
 
-  return h('div', { ref: containerRef });
+  return <div ref={containerRef} />;
 }

@@ -2,14 +2,18 @@
  * Shared DOM helpers used across all modules.
  */
 
-export function el(tag, className, attrs = {}) {
+export function el(
+  tag: string,
+  className?: string,
+  attrs: Record<string, string> = {},
+): HTMLElement {
   const node = document.createElement(tag);
   if (className) node.className = className;
   for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
   return node;
 }
 
-export function createOverlay(onClose) {
+export function createOverlay(onClose: () => void): HTMLElement {
   const overlay = el('div', 'doc-bar-overlay');
   overlay.addEventListener('click', (e) => {
     if (e.target === overlay) onClose();
@@ -17,7 +21,11 @@ export function createOverlay(onClose) {
   return overlay;
 }
 
-export function createPanel(className, title, onClose) {
+export function createPanel(
+  className: string,
+  title: string,
+  onClose: () => void,
+): { panel: HTMLElement; body: HTMLElement } {
   const panel = el('div', className, {
     role: 'dialog',
     'aria-modal': 'true',
@@ -41,7 +49,7 @@ export function createPanel(className, title, onClose) {
   return { panel, body };
 }
 
-export function createLoadingSkeleton() {
+export function createLoadingSkeleton(): HTMLElement {
   const skeleton = el('div', 'doc-bar-skeleton');
   for (let i = 0; i < 4; i++) {
     const line = el('div', i === 0 ? 'doc-bar-skeleton-line doc-bar-skeleton-line-title' : 'doc-bar-skeleton-line');

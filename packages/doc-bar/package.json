@@ -1,6 +1,6 @@
 {
     "name": "@bottomlessmargaritas/doc-bar",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "description": "A nav bar component that links to app documentation modals (summary, technical summary, technical overview, quiz)",
     "type": "module",
     "main": "./dist/index.cjs.js",
@@ -47,13 +47,12 @@
     "files": [
         "dist/",
         "types/",
-        "src/angular.ts",
-        "src/core/",
-        "src/styles.css",
+        "src/",
         "application-documentation-prompts/"
     ],
     "scripts": {
-        "build": "vite build",
+        "build": "vite build && tsc --emitDeclarationOnly",
+        "build:types": "tsc --emitDeclarationOnly",
         "dev": "vite build --watch",
         "bottomlessmargaritas:format": "prettier --config prettier.config.bottomlessmargaritas.js --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
         "bottomlessmargaritas:format:check": "prettier --config prettier.config.bottomlessmargaritas.js --check \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
@@ -70,14 +69,14 @@
     "author": "bottomlessmargaritas",
     "license": "MIT",
     "peerDependencies": {
+        "@angular/common": ">=14",
+        "@angular/core": ">=14",
+        "preact": ">=10",
         "react": ">=18",
         "react-dom": ">=18",
-        "vue": ">=3",
-        "svelte": ">=4",
         "solid-js": ">=1",
-        "preact": ">=10",
-        "@angular/core": ">=14",
-        "@angular/common": ">=14"
+        "svelte": ">=4",
+        "vue": ">=3"
     },
     "peerDependenciesMeta": {
         "react": {
@@ -106,10 +105,13 @@
         }
     },
     "devDependencies": {
+        "@sveltejs/vite-plugin-svelte": "^5.0.0",
         "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+        "@types/dompurify": "^3.0.5",
+        "@types/react": "^19.2.14",
+        "@types/react-dom": "^19.2.3",
         "@typescript-eslint/parser": "^8.57.2",
         "@vitejs/plugin-react": "^4.3.4",
-        "@sveltejs/vite-plugin-svelte": "^5.0.0",
         "eslint": "^9.39.4",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-security": "^3.0.1",
@@ -117,6 +119,7 @@
         "globals": "^15.15.0",
         "prettier": "^3.8.1",
         "svelte": "^5.0.0",
+        "typescript": "^5.7.0",
         "typescript-eslint": "^8.57.2",
         "vite": "^6.0.0",
         "vite-plugin-solid": "^2.0.0"

@@ -1,18 +1,18 @@
 import { defineComponent, h, onMounted, onUnmounted, ref, watch } from 'vue';
-import { DocBar } from './core/DocBar.js';
+import { DocBar } from './core/DocBar.ts';
 
 export default defineComponent({
   name: 'AppDocBar',
   props: {
     basePath: { type: String, default: '/.bottomlessmargaritas/application-documentation' },
-    position: { type: String, default: 'bottom' },
+    position: { type: String as () => 'top' | 'bottom', default: 'bottom' },
     fixed: { type: Boolean, default: true },
     appName: { type: String, default: '' },
-    theme: { type: String, default: 'dark' },
+    theme: { type: String as () => 'dark' | 'light', default: 'dark' },
   },
   setup(props) {
-    const containerRef = ref(null);
-    let instance = null;
+    const containerRef = ref<HTMLDivElement | null>(null);
+    let instance: InstanceType<typeof DocBar> | null = null;
 
     function remount() {
       instance?.destroy();

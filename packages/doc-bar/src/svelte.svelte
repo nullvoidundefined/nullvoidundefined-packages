@@ -1,6 +1,6 @@
 <script>
   import { onMount } from 'svelte';
-  import { DocBar } from './core/DocBar.js';
+  import { DocBar } from './core/DocBar.ts';
 
   export let basePath = '/.bottomlessmargaritas/application-documentation';
   export let position = 'bottom';

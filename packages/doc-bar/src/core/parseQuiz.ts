@@ -13,8 +13,21 @@
  *
  * > Explanation line
  */
-export function parseQuiz(markdown) {
-  const questions = [];
+
+export type Difficulty = 'easy' | 'medium' | 'hard';
+
+export interface Question {
+  number: number;
+  text: string;
+  options: string[];
+  correctIndex: number;
+  clarification: string | null;
+  explanation: string | null;
+  difficulty: Difficulty;
+}
+
+export function parseQuiz(markdown: string): Question[] {
+  const questions: Question[] = [];
   const blocks = markdown.split(/\n(?=\*\*\d+\.)/);
 
   for (const block of blocks) {
@@ -27,7 +40,7 @@ export function parseQuiz(markdown) {
     const number = parseInt(questionMatch[1], 10);
     const text = questionMatch[2].trim();
 
-    const options = [];
+    const options: string[] = [];
     let correctIndex = -1;
     const optionLines = trimmed.match(/^- (\*\*)?([A-D]\)[\s\S]+?)(\*\*)?$/gm) || [];
 
@@ -54,7 +67,7 @@ export function parseQuiz(markdown) {
     const explanation = explanationLines.length > 0 ? explanationLines.join(' ') : null;
 
     const difficultyMatch = trimmed.match(/^@ ?(easy|medium|hard)$/im);
-    const difficulty = difficultyMatch ? difficultyMatch[1].toLowerCase() : 'medium';
+    const difficulty = (difficultyMatch ? difficultyMatch[1].toLowerCase() : 'medium') as Difficulty;
 
     if (options.length >= 2 && correctIndex >= 0) {
       questions.push({ number, text, options, correctIndex, clarification, explanation, difficulty });
@@ -64,23 +77,23 @@ export function parseQuiz(markdown) {
   return questions;
 }
 
-const DIFFICULTY_ORDER = { easy: 0, medium: 1, hard: 2 };
+const DIFFICULTY_ORDER: Record<Difficulty, number> = { easy: 0, medium: 1, hard: 2 };
 
-export function sortByDifficulty(questions) {
+export function sortByDifficulty(questions: Question[]): Question[] {
   return [...questions].sort(
     (a, b) => (DIFFICULTY_ORDER[a.difficulty] ?? 1) - (DIFFICULTY_ORDER[b.difficulty] ?? 1)
   );
 }
 
-export function getDifficultyBreakdown(questions) {
-  const counts = { easy: 0, medium: 0, hard: 0 };
+export function getDifficultyBreakdown(questions: Question[]): Record<Difficulty, number> {
+  const counts: Record<Difficulty, number> = { easy: 0, medium: 0, hard: 0 };
   for (const q of questions) {
     counts[q.difficulty] = (counts[q.difficulty] || 0) + 1;
   }
   return counts;
 }
 
-export function shuffleQuestions(questions) {
+export function shuffleQuestions(questions: Question[]): Question[] {
   const shuffled = [...questions];
   for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));

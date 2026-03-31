@@ -1,15 +1,18 @@
-import { el } from './dom.js';
-import { sortByDifficulty, getDifficultyBreakdown } from './parseQuiz.js';
+import { el } from './dom.ts';
+import { sortByDifficulty, getDifficultyBreakdown } from './parseQuiz.ts';
+import type { Question, Difficulty } from './parseQuiz.ts';
 
-const GRADES = [
+type GradeLetter = 'A' | 'B' | 'C' | 'D' | 'F';
+
+const GRADES: readonly { min: number; letter: GradeLetter }[] = [
   { min: 90, letter: 'A' },
   { min: 80, letter: 'B' },
   { min: 70, letter: 'C' },
   { min: 60, letter: 'D' },
   { min: 0, letter: 'F' },
-];
+] as const;
 
-const GRADE_COLORS = {
+const GRADE_COLORS: Record<GradeLetter, string> = {
   A: '#16a34a',
   B: '#3b82f6',
   C: '#eab308',
@@ -17,7 +20,7 @@ const GRADE_COLORS = {
   F: '#dc2626',
 };
 
-const RESULT_MESSAGES = {
+const RESULT_MESSAGES: Record<GradeLetter, string> = {
   A: 'Absolutely nailed it. You know this codebase inside and out.',
   B: 'Solid work. A few gaps, but you clearly understand the architecture.',
   C: 'Not bad, but there\'s room to grow. Re-read the technical overview.',
@@ -25,11 +28,11 @@ const RESULT_MESSAGES = {
   F: 'Ouch. Did you even read the documentation?',
 };
 
-function getGrade(pct) {
+function getGrade(pct: number): GradeLetter {
   return GRADES.find((g) => pct >= g.min)?.letter ?? 'F';
 }
 
-export function buildQuiz(parsed, appName) {
+export function buildQuiz(parsed: Question[], appName?: string): HTMLElement {
   const questions = sortByDifficulty(parsed);
   const root = el('div', 'doc-bar-quiz-view');
 
@@ -40,19 +43,19 @@ export function buildQuiz(parsed, appName) {
     return root;
   }
 
-  let screen = 'start';
+  let screen: 'start' | 'quiz' | 'results' = 'start';
   let currentIndex = 0;
   let score = 0;
-  let answers = {};
+  let answers: Record<number, boolean> = {};
 
-  const render = () => {
+  const render = (): void => {
     root.innerHTML = '';
     if (screen === 'start') renderStart();
     else if (screen === 'quiz') renderQuestion();
     else if (screen === 'results') renderResults();
   };
 
-  const renderStart = () => {
+  const renderStart = (): void => {
     const breakdown = getDifficultyBreakdown(questions);
 
     if (appName) {
@@ -68,7 +71,7 @@ export function buildQuiz(parsed, appName) {
     const stats = el('div', 'doc-bar-quiz-stats');
     const countStat = el('div', 'doc-bar-quiz-stat');
     const countValue = el('span', 'doc-bar-quiz-stat-value');
-    countValue.textContent = questions.length;
+    countValue.textContent = String(questions.length);
     const countLabel = el('span', 'doc-bar-quiz-stat-label');
     countLabel.textContent = 'Questions';
     countStat.appendChild(countValue);
@@ -76,7 +79,7 @@ export function buildQuiz(parsed, appName) {
     stats.appendChild(countStat);
 
     const diffEl = el('div', 'doc-bar-quiz-difficulty-breakdown');
-    for (const [level, count] of Object.entries(breakdown)) {
+    for (const [level, count] of Object.entries(breakdown) as [Difficulty, number][]) {
       if (count === 0) continue;
       const pill = el('span', `doc-bar-quiz-diff-pill doc-bar-quiz-diff-${level}`);
       pill.textContent = `${count} ${level.charAt(0).toUpperCase() + level.slice(1)}`;
@@ -94,7 +97,7 @@ export function buildQuiz(parsed, appName) {
     root.appendChild(startBtn);
   };
 
-  const renderQuestion = () => {
+  const renderQuestion = (): void => {
     const q = questions[currentIndex];
     if (!q) return;
 
@@ -149,7 +152,7 @@ export function buildQuiz(parsed, appName) {
     const optionsEl = el('div', 'doc-bar-quiz-options');
     let answered = false;
 
-    const buttons = q.options.map((option, i) => {
+    const buttons: HTMLElement[] = q.options.map((option, i) => {
       if (!option || typeof option !== 'string') return null;
       const btn = el('button', 'doc-bar-quiz-option');
       btn.textContent = option;
@@ -165,7 +168,7 @@ export function buildQuiz(parsed, appName) {
 
         buttons.forEach((b, j) => {
           if (!b) return;
-          b.disabled = true;
+          (b as HTMLButtonElement).disabled = true;
           if (j === q.correctIndex) {
             b.className = 'doc-bar-quiz-option doc-bar-option-correct';
           } else if (j === i && !isCorrect) {
@@ -199,14 +202,14 @@ export function buildQuiz(parsed, appName) {
         card.appendChild(nextBtn);
       });
       return btn;
-    }).filter(Boolean);
+    }).filter((btn): btn is HTMLElement => btn !== null);
 
     buttons.forEach((btn) => optionsEl.appendChild(btn));
     card.appendChild(optionsEl);
     root.appendChild(card);
   };
 
-  const renderResults = () => {
+  const renderResults = (): void => {
     const correct = Object.values(answers).filter(Boolean).length;
     const pct = Math.round((correct / questions.length) * 100);
     const grade = getGrade(pct);

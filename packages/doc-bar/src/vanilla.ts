@@ -24,15 +24,23 @@
  *
  *   const bar = inject({ appName: 'My App' });
  */
-import { DocBar } from './core/DocBar.js';
+import { DocBar } from './core/DocBar.ts';
 
 export { DocBar };
+
+export interface InjectOptions {
+  basePath?: string;
+  position?: 'top' | 'bottom';
+  fixed?: boolean;
+  appName?: string;
+  theme?: 'dark' | 'light';
+}
 
 /**
  * Creates a container div, prepends it to document.body, and mounts
  * a DocBar instance. Returns the instance (call .destroy() to remove).
  */
-export function inject(options = {}) {
+export function inject(options: InjectOptions = {}): InstanceType<typeof DocBar> {
   const container = document.createElement('div');
   container.setAttribute('data-doc-bar', '');
   document.body.prepend(container);

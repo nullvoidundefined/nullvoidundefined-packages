@@ -6,7 +6,7 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { DocBar } from './core/DocBar.js';
+import { DocBar } from './core/DocBar.ts';
 
 /**
  * Angular wrapper for AppDocBar.
