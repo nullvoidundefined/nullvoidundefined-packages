@@ -1,3 +1,7 @@
+function slugify(text) {
+  return text.toLowerCase().replace(/[^\w]+/g, '-').replace(/^-|-$/g, '');
+}
+
 export function markdownToHtml(md) {
   let html = md;
 
@@ -10,10 +14,10 @@ export function markdownToHtml(md) {
     return `<pre><code class="language-${lang}">${escaped}</code></pre>`;
   });
 
-  // Headings
-  html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
-  html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
-  html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+  // Headings (with id attributes for anchor links)
+  html = html.replace(/^### (.+)$/gm, (_, t) => `<h3 id="${slugify(t)}">${t}</h3>`);
+  html = html.replace(/^## (.+)$/gm, (_, t) => `<h2 id="${slugify(t)}">${t}</h2>`);
+  html = html.replace(/^# (.+)$/gm, (_, t) => `<h1 id="${slugify(t)}">${t}</h1>`);
 
   // Horizontal rule
   html = html.replace(/^---$/gm, '<hr>');
@@ -44,10 +48,15 @@ export function markdownToHtml(md) {
   // Images (before links)
   html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img alt="$1" src="$2">');
 
-  // Links
+  // Links — anchor links scroll in-place, external links open new tab
   html = html.replace(
     /\[([^\]]+)\]\(([^)]+)\)/g,
-    '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>'
+    (_, text, href) => {
+      if (href.startsWith('#')) {
+        return `<a href="${href}" class="doc-bar-anchor-link">${text}</a>`;
+      }
+      return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+    }
   );
 
   // Bold

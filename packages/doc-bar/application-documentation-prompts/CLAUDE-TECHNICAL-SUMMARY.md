@@ -18,9 +18,20 @@ App Documents/technical-summary.md
 
 Generate the markdown file with exactly these sections, in this order:
 
+### Version Stamp (required first line)
+
+The very first line of the generated file **must** be the following HTML comment. The doc-bar component checks for this stamp and will prompt the user to regenerate if it is missing or outdated.
+
+```markdown
+<!-- @bottomlessmargaritas/doc-bar format:1 -->
+```
+
+This line must appear before anything else — before the title, before any blank lines.
+
 ### 1. Title
 
 ```markdown
+<!-- @bottomlessmargaritas/doc-bar format:1 -->
 # [App Name] — Technical Summary
 ```
 

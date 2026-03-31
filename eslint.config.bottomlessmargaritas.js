@@ -11,7 +11,14 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config([
   {
-    ignores: ['build', 'dist', 'node_modules', '**/*.d.ts', '.turbo'],
+    ignores: [
+      '**/build/**',
+      '**/dist/**',
+      '**/node_modules/**',
+      '**/*.d.ts',
+      '**/.turbo/**',
+      '**/.next/**',
+    ],
   },
   {
     linterOptions: {
@@ -23,7 +30,7 @@ export default tseslint.config([
       'unused-imports': unusedImports,
     },
     rules: {
-      'curly': 'error',
+      curly: 'error',
       'no-console': ['warn', { allow: ['warn', 'info', 'error', 'group'] }],
       'no-implicit-globals': 'error',
       'no-param-reassign': ['error', { props: false }],
@@ -80,7 +87,10 @@ export default tseslint.config([
       },
     },
     rules: {
-      '@typescript-eslint/ban-ts-comment': ['warn', { 'ts-ignore': 'allow-with-description' }],
+      '@typescript-eslint/ban-ts-comment': [
+        'warn',
+        { 'ts-ignore': 'allow-with-description' },
+      ],
       '@typescript-eslint/consistent-type-definitions': 'off',
       '@typescript-eslint/consistent-type-imports': [
         'warn',

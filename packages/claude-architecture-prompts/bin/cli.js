@@ -72,13 +72,20 @@ function run() {
         copied++;
     }
 
-    // Remove stale files from previous versions that are no longer in the package
+    // Remove stale files from previous versions that are no longer in the package.
+    // Only remove files matching known prefixes (CLAUDE-*, CLOUD-*) to avoid
+    // deleting user-created files in the same directory.
+    const KNOWN_FILE_PREFIXES = ["CLAUDE-", "CLAUDE.", "CLOUD-"];
     const currentFiles = new Set(ruleFiles);
     let removed = 0;
 
     if (existsSync(targetDir)) {
         for (const file of readdirSync(targetDir)) {
-            if (file.endsWith(".md") && !currentFiles.has(file)) {
+            if (
+                file.endsWith(".md") &&
+                !currentFiles.has(file) &&
+                KNOWN_FILE_PREFIXES.some((prefix) => file.startsWith(prefix))
+            ) {
                 if (isDryRun) {
                     console.log(`[dry-run] Would remove stale file: ${TARGET_DIR}/${file}`);
                 } else {

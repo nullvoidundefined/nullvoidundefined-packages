@@ -1,6 +1,6 @@
 # Generating Quiz Content
 
-This prompt defines how to generate the `quiz.md` file for the `App Documents/` folder. The Quiz is the fourth link in the nav bar and renders as an interactive, single-view quiz component where all questions are visible and answerable in any order.
+This prompt defines how to generate the `quiz.md` file for the `App Documents/` folder. The Quiz is the fourth link in the nav bar and renders as an interactive quiz with a start screen, one-question-at-a-time progression (ordered from easy to hard), and a results screen with letter grade and feedback.
 
 ---
 
@@ -22,6 +22,7 @@ The quiz parser (`parseQuiz.js`) expects a specific markdown format. Every quest
 
 ```markdown
 **[NUMBER]. [QUESTION TEXT]?**
+@ [easy|medium|hard]
 - A) [Option text]
 - **B) [Correct option text — wrapped in bold]**
 - C) [Option text]
@@ -40,21 +41,24 @@ These are not style preferences — the parser will fail to extract questions th
 
 1. **Question line:** Must start with `**` followed by a number, a period, a space, the question text, and end with `**`. The question text should end with `?` but this is not parser-required.
 
-2. **Options:** Exactly four options, each on its own line starting with `- `. Option letters must be `A)`, `B)`, `C)`, `D)` in order. Exactly one option must be wrapped in `**bold**` to mark it as correct.
+2. **Difficulty line** (optional but strongly recommended): A line starting with `@ ` followed by `easy`, `medium`, or `hard`. Must appear after the question line and before the options. If omitted, the question defaults to `medium`. Difficulty determines display order in the quiz (easy first, hard last).
 
-3. **Clarification lines** (optional but strongly recommended): Each line starts with `? ` (question mark + space). Multiple lines are joined into a single paragraph. Supports inline markdown: `[links](url)` and `` `code` ``.
+3. **Options:** Exactly four options, each on its own line starting with `- `. Option letters must be `A)`, `B)`, `C)`, `D)` in order. Exactly one option must be wrapped in `**bold**` to mark it as correct.
 
-4. **Explanation lines** (optional but strongly recommended): Each line starts with `> ` (greater-than + space). Multiple lines are joined into a single paragraph. Supports inline markdown: `[links](url)` and `` `code` ``.
+4. **Clarification lines** (optional but strongly recommended): Each line starts with `? ` (question mark + space). Multiple lines are joined into a single paragraph. Supports inline markdown: `[links](url)` and `` `code` ``.
 
-5. **Separation:** Questions are separated by the next `**[NUMBER].` pattern. An optional `---` horizontal rule can be placed between questions for readability but is not required.
+5. **Explanation lines** (optional but strongly recommended): Each line starts with `> ` (greater-than + space). Multiple lines are joined into a single paragraph. Supports inline markdown: `[links](url)` and `` `code` ``.
 
-6. **Numbering:** Questions must be numbered sequentially starting from 1. Gaps in numbering won't break the parser but should be avoided.
+6. **Separation:** Questions are separated by the next `**[NUMBER].` pattern. An optional `---` horizontal rule can be placed between questions for readability but is not required.
+
+7. **Numbering:** Questions must be numbered sequentially starting from 1. Gaps in numbering won't break the parser but should be avoided.
 
 ### File Header
 
-Start the file with a descriptive header (not parsed as a question):
+Start the file with a version stamp and descriptive header (not parsed as a question). The version stamp on line 1 is **required** — the doc-bar component checks for it and will prompt the user to regenerate if it is missing or outdated.
 
 ```markdown
+<!-- @bottomlessmargaritas/doc-bar format:1 -->
 # [App Name] — Quiz Questions
 
 Each question has four options. Only one is correct (marked with **bold**).
@@ -91,7 +95,7 @@ Aim for a mix of difficulty levels:
 
 ### Question Count
 
-Generate **30–50 questions** per app. The quiz component draws from this pool and the user can answer in any order in the single-view layout.
+Generate **30–50 questions** per app. The quiz presents questions one at a time, ordered from easy to hard, with a start screen showing question count and difficulty breakdown, and a results screen with letter grade and feedback.
 
 - Minimum: 30 questions (enough for variety across categories)
 - Sweet spot: 40 questions
@@ -158,6 +162,7 @@ This is bad because it names the correct answer in the clarification.
 
 ```markdown
 **12. What pattern does the API use to handle failed AI extractions?**
+@ hard
 - A) Silently discards the response and returns an empty object
 - B) Logs the error and returns a 500 status with a generic message
 - **C) Retries the extraction up to 2 times, feeding validation errors back into the prompt**
@@ -185,12 +190,13 @@ This is bad because it names the correct answer in the clarification.
 
 1. **30–50 questions** per quiz file
 2. **Every question must have all 4 options** — the parser drops questions with fewer
-3. **Every question should have both clarification and explanation** — they're technically optional but should always be included
-4. **Markdown format must be exact** — see Parser Requirements above
-5. **No HTML** in question text or options — HTML is only supported in clarification and explanation (via inline markdown conversion)
-6. **Sequential numbering** starting from 1
-7. **Even distribution** across the 8 question categories
-8. **Mixed difficulty** — 30% easy, 50% medium, 20% hard
+3. **Every question must have a difficulty tag** — `@ easy`, `@ medium`, or `@ hard` on the line after the question text
+4. **Every question should have both clarification and explanation** — they're technically optional but should always be included
+5. **Markdown format must be exact** — see Parser Requirements above
+6. **No HTML** in question text or options — HTML is only supported in clarification and explanation (via inline markdown conversion)
+7. **Sequential numbering** starting from 1
+8. **Even distribution** across the 8 question categories
+9. **Mixed difficulty** — 30% easy, 50% medium, 20% hard
 
 ---
 

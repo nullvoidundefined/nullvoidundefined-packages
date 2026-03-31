@@ -27,6 +27,7 @@ export default defineConfig({
     lib: {
       entry: {
         index: resolve(__dirname, 'src/index.js'),
+        vanilla: resolve(__dirname, 'src/vanilla.js'),
         vue: resolve(__dirname, 'src/vue.js'),
         svelte: resolve(__dirname, 'src/svelte.svelte'),
         solid: resolve(__dirname, 'src/solid.jsx'),

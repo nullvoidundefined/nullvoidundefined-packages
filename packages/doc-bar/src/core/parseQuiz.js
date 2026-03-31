@@ -53,12 +53,31 @@ export function parseQuiz(markdown) {
     );
     const explanation = explanationLines.length > 0 ? explanationLines.join(' ') : null;
 
+    const difficultyMatch = trimmed.match(/^@ ?(easy|medium|hard)$/im);
+    const difficulty = difficultyMatch ? difficultyMatch[1].toLowerCase() : 'medium';
+
     if (options.length >= 2 && correctIndex >= 0) {
-      questions.push({ number, text, options, correctIndex, clarification, explanation });
+      questions.push({ number, text, options, correctIndex, clarification, explanation, difficulty });
     }
   }
 
   return questions;
+}
+
+const DIFFICULTY_ORDER = { easy: 0, medium: 1, hard: 2 };
+
+export function sortByDifficulty(questions) {
+  return [...questions].sort(
+    (a, b) => (DIFFICULTY_ORDER[a.difficulty] ?? 1) - (DIFFICULTY_ORDER[b.difficulty] ?? 1)
+  );
+}
+
+export function getDifficultyBreakdown(questions) {
+  const counts = { easy: 0, medium: 0, hard: 0 };
+  for (const q of questions) {
+    counts[q.difficulty] = (counts[q.difficulty] || 0) + 1;
+  }
+  return counts;
 }
 
 export function shuffleQuestions(questions) {

@@ -24,9 +24,20 @@ App Documents/technical-overview.md
 
 Generate the markdown file with these sections. Unlike the Summary and Technical Summary, the Technical Overview is longer and more detailed. Not every section applies to every app — skip sections that don't apply, but include all that do.
 
+### Version Stamp (required first line)
+
+The very first line of the generated file **must** be the following HTML comment. The doc-bar component checks for this stamp and will prompt the user to regenerate if it is missing or outdated.
+
+```markdown
+<!-- @bottomlessmargaritas/doc-bar format:1 -->
+```
+
+This line must appear before anything else — before the title, before any blank lines.
+
 ### 1. Title
 
 ```markdown
+<!-- @bottomlessmargaritas/doc-bar format:1 -->
 # [App Name] — Technical Overview
 ```
 

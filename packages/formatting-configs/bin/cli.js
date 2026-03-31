@@ -118,12 +118,19 @@ function copyConfigFiles(projectRoot) {
         copied++;
     }
 
-    // Remove stale namespaced config files from previous versions
+    // Remove stale namespaced config files from previous versions.
+    // Only remove files that match known config patterns (eslint/prettier) to avoid
+    // deleting user files that happen to contain the namespace in their name.
+    const KNOWN_CONFIG_PREFIXES = ["eslint.config.", "prettier.config."];
     const namespacedPattern = `.${NAMESPACE}.`;
     let removed = 0;
 
     for (const file of readdirSync(projectRoot)) {
-        if (file.includes(namespacedPattern) && !currentNamespacedFiles.has(file)) {
+        if (
+            file.includes(namespacedPattern) &&
+            !currentNamespacedFiles.has(file) &&
+            KNOWN_CONFIG_PREFIXES.some((prefix) => file.startsWith(prefix))
+        ) {
             if (isDryRun) {
                 console.log(`[dry-run] Would remove stale config: ${file}`);
             } else {
@@ -157,9 +164,16 @@ function updatePackageJsonScripts(projectRoot) {
         }
     }
 
-    // Remove stale namespaced scripts from previous versions
+    // Remove stale namespaced scripts from previous versions.
+    // Only remove scripts matching known prefixes (format/lint) to avoid
+    // deleting user-defined scripts that happen to use the namespace prefix.
+    const KNOWN_SCRIPT_PREFIXES = [`${NAMESPACE}:format`, `${NAMESPACE}:lint`];
     for (const name of Object.keys(pkg.scripts)) {
-        if (name.startsWith(`${NAMESPACE}:`) && !currentScriptNames.has(name)) {
+        if (
+            name.startsWith(`${NAMESPACE}:`) &&
+            !currentScriptNames.has(name) &&
+            KNOWN_SCRIPT_PREFIXES.some((prefix) => name.startsWith(prefix))
+        ) {
             delete pkg.scripts[name];
             removed++;
         }
