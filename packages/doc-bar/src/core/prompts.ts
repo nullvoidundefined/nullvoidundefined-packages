@@ -8,6 +8,7 @@
  */
 
 import summaryPrompt from '../../application-documentation-prompts/CLAUDE-SUMMARY.md?raw';
+import stackGuidePrompt from '../../application-documentation-prompts/CLAUDE-STACK-GUIDE.md?raw';
 import technicalSummaryPrompt from '../../application-documentation-prompts/CLAUDE-TECHNICAL-SUMMARY.md?raw';
 import technicalOverviewPrompt from '../../application-documentation-prompts/CLAUDE-TECHNICAL-OVERVIEW.md?raw';
 import quizPrompt from '../../application-documentation-prompts/CLAUDE-QUIZ.md?raw';
@@ -19,6 +20,7 @@ export const VERSION_COMMENT = `<!-- @bottomlessmargaritas/doc-bar format:${DOC_
 
 export const PROMPTS: Record<string, string> = {
   summary: summaryPrompt,
+  stack: stackGuidePrompt,
   'technical-summary': technicalSummaryPrompt,
   'technical-overview': technicalOverviewPrompt,
   quiz: quizPrompt,
@@ -27,7 +29,7 @@ export const PROMPTS: Record<string, string> = {
 
 export const COMBINED_PROMPT = `# Generate Application Documentation
 
-Generate all five documentation files for this project. Read the entire codebase first, then produce each file following the specifications below. Each file must start with the version stamp: \`${VERSION_COMMENT}\`
+Generate all six documentation files for this project. Read the entire codebase first, then produce each file following the specifications below. Each file must start with the version stamp: \`${VERSION_COMMENT}\`
 
 ## CRITICAL: Privacy & Security
 
@@ -40,7 +42,7 @@ Generate all five documentation files for this project. Read the entire codebase
 
 If you encounter sensitive data while reading the codebase, **skip it entirely**. Document the existence of environment variables by name only (e.g., "requires \`DATABASE_URL\`") without revealing values. Never include real secrets, credentials, or personal data in any generated document.
 
-Output all four files clearly separated with the filename as a heading.
+Output all six files clearly separated with the filename as a heading.
 
 ---
 
@@ -50,25 +52,31 @@ ${summaryPrompt}
 
 ---
 
-## File 2: technical-summary.md
+## File 2: stack.md
+
+${stackGuidePrompt}
+
+---
+
+## File 3: technical-summary.md
 
 ${technicalSummaryPrompt}
 
 ---
 
-## File 3: technical-overview.md
+## File 4: technical-overview.md
 
 ${technicalOverviewPrompt}
 
 ---
 
-## File 4: quiz.md
+## File 5: quiz.md
 
 ${quizPrompt}
 
 ---
 
-## File 5: review.md
+## File 6: review.md
 
 ${reviewPrompt}
 `;

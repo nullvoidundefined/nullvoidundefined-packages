@@ -31,6 +31,7 @@ export interface NavLink {
 
 const NAV_LINKS: readonly NavLink[] = [
   { key: 'summary', label: 'Summary', file: 'summary.md' },
+  { key: 'stack', label: 'Stack Guide', file: 'stack.md' },
   { key: 'technical-summary', label: 'Technical Summary', file: 'technical-summary.md' },
   { key: 'technical-overview', label: 'Technical Overview', file: 'technical-overview.md' },
   { key: 'quiz', label: 'Quiz', file: 'quiz.md' },

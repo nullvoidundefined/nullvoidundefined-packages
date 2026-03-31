@@ -6,7 +6,7 @@ This prompt defines how to generate the `technical-summary.md` file. The Technic
 
 ## Purpose
 
-The Technical Summary answers: **"How is this app built, and what are the key technical decisions?"** It is written for developers — engineers evaluating the project, teammates onboarding, or the original author returning after time away. It covers architecture, patterns, and decisions at a level between the non-technical Summary and the exhaustive Technical Overview.
+The Technical Summary answers: **"How is this thing built?"** It's a mid-level overview for when you want to understand the architecture without reading every file. Written in technical language but still approachable — it names specific tools and explains why they're used.
 
 ## CRITICAL: Privacy & Security
 
@@ -177,9 +177,9 @@ A section under `## Decisions` with 3–5 bullet points explaining the most impo
 ```markdown
 ## Decisions
 
-- **SCSS over Tailwind** — Full control over the design system with minimal dependencies. CSS modules provide scoping without runtime cost.
-- **No ORM** — Raw SQL via a thin repository layer. The queries are simple enough that an ORM adds complexity without benefit.
-- **Flat config ESLint** — Uses ESLint 9's new format for simpler composition and better TypeScript integration.
+- **SCSS over Tailwind** — Wanted full control over styling without learning utility classes. CSS modules keep styles scoped to each component automatically.
+- **No ORM** — The queries are simple enough that raw SQL is easier to understand and debug than learning an ORM's abstractions.
+- **Flat config ESLint** — ESLint 9's new config format is just a plain array — way easier to read than the old nested object style.
 ```
 
 **Rules:**

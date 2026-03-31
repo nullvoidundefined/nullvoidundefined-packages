@@ -6,7 +6,7 @@ This prompt defines how to generate the `summary.md` file. The Summary is the fi
 
 ## Purpose
 
-The Summary document answers: **"What does this app do, and why does it matter?"** It is written for a broad audience — product managers, designers, stakeholders, or developers unfamiliar with the project. No code, no architecture diagrams, no implementation details.
+The Summary document answers: **"What did I build?"** It's written for anyone — including you, the person who built the app. No code, no jargon, just a clear explanation of what the app does and why it matters.
 
 ## CRITICAL: Privacy & Security
 
@@ -55,7 +55,7 @@ A 2–3 paragraph section under `## Overview` explaining:
 
 - What problem the app solves
 - Who the intended users are
-- What the core user experience looks like (from the user's perspective, not the developer's)
+- What the core user experience looks like (from the user's perspective, not yours as the builder)
 - What makes this app interesting or different from alternatives
 
 **Tone:** Conversational, clear, confident. Write as if explaining the app to a smart friend who is not a developer. Avoid hedging language ("kind of", "sort of", "basically").
@@ -149,9 +149,9 @@ Built with React and Express on Node.js, backed by PostgreSQL, with Claude power
 
 ## Generating for a New Project
 
-1. Read the project's README, configuration files, and source code to understand what it does
+1. Read the project's source code and configuration files to understand what it does
 2. Identify the user-facing features (not the technical implementation)
 3. Map out the user flow from first interaction to final result
 4. Write the summary following the structure above
-5. Verify: could a non-technical person read this and understand the app? If not, simplify.
+5. Verify: could you read this and understand your own app? If not, simplify.
 6. Verify: does every section exist and follow the rules? Check length is 400–600 words.

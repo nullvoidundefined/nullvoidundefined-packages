@@ -26,11 +26,11 @@ export function buildGenerateUI(basePath: string, navLinks: NavLink[]): HTMLElem
 
   const header = el('div', 'doc-bar-prompt-header');
   const title = el('h3', 'doc-bar-prompt-title');
-  title.textContent = 'Documentation not generated yet';
+  title.textContent = 'Let\'s learn about your project';
   header.appendChild(title);
 
   const desc = el('p', 'doc-bar-prompt-desc');
-  desc.textContent = 'Copy the generation prompt and paste it into your preferred AI assistant. Your assistant will generate the docs based on your project\'s source code. Feel free to modify the resulting docs however you wish.';
+  desc.textContent = 'Grab this prompt, drop it into ChatGPT or Claude, and it\'ll explain your entire project to you. You\'ll get a summary, a guide to your tech stack, architecture docs, a quiz, and a code review.';
   header.appendChild(desc);
   wrapper.appendChild(header);
 
@@ -39,13 +39,13 @@ export function buildGenerateUI(basePath: string, navLinks: NavLink[]): HTMLElem
   warningIcon.textContent = '\u26a0';
   warning.appendChild(warningIcon);
   const warningText = el('span');
-  warningText.textContent = 'This tool is intended for personal projects. If you work within an organization, respect your organization\'s rules and requirements for sharing code with an LLM before using this prompt.';
+  warningText.textContent = 'This copies a prompt to your clipboard — you\'ll paste it into your own AI tool. Nothing is sent anywhere automatically. If you\'re working on a team project, check with your org before sharing code with an AI.';
   warning.appendChild(warningText);
   wrapper.appendChild(warning);
 
   const pathInfo = el('div', 'doc-bar-prompt-path');
   pathInfo.innerHTML = DOMPurify.sanitize(
-    `Save generated files to: <code>${basePath}/</code>`
+    `It'll generate these files: <code>${basePath}/</code>`
   );
   wrapper.appendChild(pathInfo);
 
@@ -57,7 +57,7 @@ export function buildGenerateUI(basePath: string, navLinks: NavLink[]): HTMLElem
   }
   wrapper.appendChild(fileList);
 
-  wrapper.appendChild(createCopyButton(COMBINED_PROMPT, 'Copy Prompt to Clipboard'));
+  wrapper.appendChild(createCopyButton(COMBINED_PROMPT, 'Copy Prompt'));
 
   return wrapper;
 }

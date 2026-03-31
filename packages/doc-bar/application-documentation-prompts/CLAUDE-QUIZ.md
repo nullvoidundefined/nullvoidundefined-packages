@@ -1,12 +1,12 @@
 # Generating Quiz Content
 
-This prompt defines how to generate the `quiz.md` file. The Quiz is the fourth link in the doc-bar and renders as an interactive quiz with a start screen, one-question-at-a-time progression (ordered from easy to hard), and a results screen with letter grade and feedback.
+This prompt defines how to generate the `quiz.md` file. The Quiz is the fourth link in the doc-bar and renders as an interactive quiz with a start screen, one-question-at-a-time progression (ordered from easy to hard), and an encouraging results screen.
 
 ---
 
 ## Purpose
 
-The Quiz tests the reader's understanding of the application — its architecture, tools, APIs, patterns, and concepts. It reinforces learning from the Summary, Technical Summary, and Technical Overview documents. A well-written quiz turns passive reading into active recall.
+The Quiz tests whether you actually understand your own project. It's not a test you can fail — it's a way to discover what you know and what you don't. Think of it as a self-assessment that shows you exactly where to focus your learning.
 
 ## CRITICAL: Privacy & Security
 
@@ -99,7 +99,12 @@ Aim for a mix of difficulty levels:
 
 ### Question Count
 
-Generate **20–100 questions** per project, scaling with the size and complexity of the codebase. The quiz presents questions one at a time, ordered from easy to hard, with a start screen showing question count and difficulty breakdown, and a results screen with letter grade and feedback.
+Generate **20–100 questions** per project, scaling with the size and complexity of the codebase. The quiz presents questions one at a time, ordered from easy to hard, with a start screen showing question count and difficulty breakdown, and a results screen with score and encouragement. The quiz should feel encouraging, not punishing. Suggested result messages by score range:
+
+- **90%+:** "You really know your stuff! You could explain this project to someone else."
+- **70–89%:** "Solid understanding! A few gaps to fill — check the explanations for the ones you missed."
+- **50–69%:** "You're getting there! Re-read the Stack Guide and Technical Summary to fill in the gaps."
+- **Below 50%:** "Looks like there's a lot to learn here — and that's totally fine! Start with the Stack Guide and work your way through."
 
 - **Small projects** (< 10 source files, single-page apps, templates): 20–30 questions
 - **Medium projects** (10–50 source files, multiple features, API routes): 30–60 questions

@@ -6,7 +6,7 @@ This prompt defines how to generate the `review.md` file. The Review is the fift
 
 ## Purpose
 
-The Review document answers: **"What could be improved in this codebase, and how?"** It is an honest, constructive code audit that identifies bugs, security vulnerabilities, race conditions, code smells, architectural opportunities, and areas where the code could be stronger. Think of it as a friendly senior engineer sitting down with you over coffee to walk through your code — pointing things out, explaining why they matter, and showing you exactly how to fix them.
+The Review answers: **"What should I fix, and how?"** Think of it as a friendly senior developer sitting down with you to look at your code — pointing things out, explaining why they matter, and showing you exactly how to fix them. No judgment, just actionable advice with links to learn more.
 
 The tone should be **kind, encouraging, and educational**. The target audience is junior developers and vibe coders who are learning by building. Every finding should teach something — link to resources, explain the "why" behind best practices, and offer concrete solutions. Never be condescending or dismissive. Celebrate what's done well alongside what needs improvement.
 
@@ -56,8 +56,8 @@ Include this legend so readers understand the ratings:
 
 | Level | Meaning |
 |-------|---------|
-| **CRITICAL** | Security vulnerability, data loss risk, or crash in production. Fix immediately. |
-| **HIGH** | Bug that affects users, race condition, or architectural flaw. Fix before next release. |
+| **CRITICAL** | Security vulnerability, data loss risk, or crash in production. Worth fixing soon — here's why and how. |
+| **HIGH** | Bug that affects users, race condition, or architectural flaw. Good to tackle when you have time. |
 | **MEDIUM** | Code smell, missing validation, or non-standard practice. Fix during normal development. |
 | **LOW** | Style issue, minor optimization, or documentation gap. Fix when convenient. |
 | **INFO** | Observation or suggestion. Not a problem, but worth knowing. |

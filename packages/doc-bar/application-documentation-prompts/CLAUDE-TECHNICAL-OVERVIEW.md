@@ -6,13 +6,14 @@ This prompt defines how to generate the `technical-overview.md` file. The Techni
 
 ## Purpose
 
-The Technical Overview answers: **"How does every part of this system actually work, down to the implementation level?"** It is the document a developer reads when they need to modify, debug, or extend the application. It includes code patterns, file-by-file explanations, configuration details, and implementation rationale that go far beyond the Technical Summary.
+The Technical Overview answers: **"How does every piece actually work?"** This is the deep dive. When you need to modify, debug, or extend your app, this is the document you read. It includes code patterns, file-by-file explanations, and implementation details.
 
 Think of it this way:
 
-- **Summary** → What the app does (non-technical)
-- **Technical Summary** → How the app is built (architectural overview)
-- **Technical Overview** → How every piece works (implementation reference)
+- **Summary** → What did I build?
+- **Stack Guide** → What tools am I using?
+- **Technical Summary** → How is it put together?
+- **Technical Overview** → How does every piece work?
 
 ## CRITICAL: Privacy & Security
 

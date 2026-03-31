@@ -1,6 +1,6 @@
 {
     "name": "@bottomlessmargaritas/doc-bar",
-    "version": "1.2.4",
+    "version": "2.0.0",
     "description": "A nav bar component that links to app documentation modals (summary, technical summary, technical overview, quiz)",
     "type": "module",
     "main": "./dist/index.cjs.js",
@@ -48,7 +48,8 @@
         "dist/",
         "types/",
         "src/",
-        "application-documentation-prompts/"
+        "application-documentation-prompts/",
+        "bin/"
     ],
     "scripts": {
         "build": "vite build && tsc --emitDeclarationOnly",
@@ -57,7 +58,8 @@
         "bottomlessmargaritas:format": "prettier --config prettier.config.bottomlessmargaritas.js --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
         "bottomlessmargaritas:format:check": "prettier --config prettier.config.bottomlessmargaritas.js --check \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
         "bottomlessmargaritas:lint": "eslint --config eslint.config.bottomlessmargaritas.js .",
-        "bottomlessmargaritas:lint:fix": "eslint --config eslint.config.bottomlessmargaritas.js . --fix"
+        "bottomlessmargaritas:lint:fix": "eslint --config eslint.config.bottomlessmargaritas.js . --fix",
+        "postinstall": "node bin/postinstall.js"
     },
     "keywords": [
         "react",
