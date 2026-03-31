@@ -1,5 +1,23 @@
+const SEVERITY_CLASSES: Record<string, string> = {
+  CRITICAL: 'doc-bar-severity-critical',
+  HIGH: 'doc-bar-severity-high',
+  MEDIUM: 'doc-bar-severity-medium',
+  LOW: 'doc-bar-severity-low',
+  INFO: 'doc-bar-severity-info',
+};
+
 function slugify(text: string): string {
   return text.toLowerCase().replace(/[^\w]+/g, '-').replace(/^-|-$/g, '');
+}
+
+function renderSeverityBadges(text: string): string {
+  return text.replace(
+    /\b(CRITICAL|HIGH|MEDIUM|LOW|INFO)\b/g,
+    (_, severity: string) => {
+      const cls = SEVERITY_CLASSES[severity];
+      return cls ? `<span class="doc-bar-severity-badge ${cls}">${severity}</span>` : severity;
+    }
+  );
 }
 
 export function markdownToHtml(md: string): string {
@@ -15,7 +33,8 @@ export function markdownToHtml(md: string): string {
   });
 
   // Headings (with id attributes for anchor links)
-  html = html.replace(/^### (.+)$/gm, (_, t) => `<h3 id="${slugify(t)}">${t}</h3>`);
+  // h3 gets severity badge rendering for review findings (e.g. "### Title — CRITICAL")
+  html = html.replace(/^### (.+)$/gm, (_, t) => `<h3 id="${slugify(t)}">${renderSeverityBadges(t)}</h3>`);
   html = html.replace(/^## (.+)$/gm, (_, t) => `<h2 id="${slugify(t)}">${t}</h2>`);
   html = html.replace(/^# (.+)$/gm, (_, t) => `<h1 id="${slugify(t)}">${t}</h1>`);
 
@@ -64,8 +83,8 @@ export function markdownToHtml(md: string): string {
     }
   );
 
-  // Bold
-  html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  // Bold — with severity badge rendering inside bold text
+  html = html.replace(/\*\*([^*]+)\*\*/g, (_, t) => `<strong>${renderSeverityBadges(t)}</strong>`);
 
   // Italic
   html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');

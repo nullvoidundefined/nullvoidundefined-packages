@@ -397,6 +397,62 @@
 }
 
 /* --------------------------------------------------------------------------
+   Severity Badges (Review document)
+   -------------------------------------------------------------------------- */
+
+.doc-bar-severity-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  vertical-align: middle;
+  margin-left: 0.5rem;
+  border: 1px solid;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.doc-bar-severity-critical {
+  background: #450a0a;
+  border-color: #dc2626;
+  color: #fecaca;
+}
+
+.doc-bar-severity-high {
+  background: #431407;
+  border-color: #ea580c;
+  color: #fed7aa;
+}
+
+.doc-bar-severity-medium {
+  background: #422006;
+  border-color: #d97706;
+  color: #fde68a;
+}
+
+.doc-bar-severity-low {
+  background: #1a2e05;
+  border-color: #65a30d;
+  color: #d9f99d;
+}
+
+.doc-bar-severity-info {
+  background: #0c1a3d;
+  border-color: #3b82f6;
+  color: #bfdbfe;
+}
+
+/* Severity badge inside h3 — adjust positioning */
+.doc-bar-md h3 .doc-bar-severity-badge {
+  font-size: 0.65rem;
+  position: relative;
+  top: -1px;
+}
+
+/* --------------------------------------------------------------------------
    Quiz View
    -------------------------------------------------------------------------- */
 
