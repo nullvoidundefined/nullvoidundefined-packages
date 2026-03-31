@@ -8,6 +8,7 @@ const NAV_LINKS = [
   { key: 'technical-summary', label: 'Technical Summary', file: 'technical-summary.md' },
   { key: 'technical-overview', label: 'Technical Overview', file: 'technical-overview.md' },
   { key: 'quiz', label: 'Quiz', file: 'quiz.md' },
+  { key: 'review', label: 'Review', file: 'review.md' },
 ];
 
 const GRADES = [

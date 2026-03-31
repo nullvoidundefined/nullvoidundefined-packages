@@ -11,6 +11,7 @@ import summaryPrompt from '../../application-documentation-prompts/CLAUDE-SUMMAR
 import technicalSummaryPrompt from '../../application-documentation-prompts/CLAUDE-TECHNICAL-SUMMARY.md?raw';
 import technicalOverviewPrompt from '../../application-documentation-prompts/CLAUDE-TECHNICAL-OVERVIEW.md?raw';
 import quizPrompt from '../../application-documentation-prompts/CLAUDE-QUIZ.md?raw';
+import reviewPrompt from '../../application-documentation-prompts/CLAUDE-REVIEW.md?raw';
 
 export const DOC_FORMAT_VERSION = 1;
 
@@ -21,11 +22,12 @@ export const PROMPTS = {
   'technical-summary': technicalSummaryPrompt,
   'technical-overview': technicalOverviewPrompt,
   quiz: quizPrompt,
+  review: reviewPrompt,
 };
 
 export const COMBINED_PROMPT = `# Generate Application Documentation
 
-Generate all four documentation files for this project. Read the entire codebase first, then produce each file following the specifications below. Each file must start with the version stamp: \`${VERSION_COMMENT}\`
+Generate all five documentation files for this project. Read the entire codebase first, then produce each file following the specifications below. Each file must start with the version stamp: \`${VERSION_COMMENT}\`
 
 ## CRITICAL: Privacy & Security
 
@@ -63,6 +65,12 @@ ${technicalOverviewPrompt}
 ## File 4: quiz.md
 
 ${quizPrompt}
+
+---
+
+## File 5: review.md
+
+${reviewPrompt}
 `;
 
 /**
