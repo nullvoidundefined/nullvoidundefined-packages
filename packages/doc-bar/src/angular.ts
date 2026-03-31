@@ -40,8 +40,8 @@ import { DocBar } from './core/DocBar.js';
 })
 export class AppDocBarComponent implements OnInit, OnChanges, OnDestroy {
   @Input() basePath = '/.bottomlessmargaritas/application-documentation';
-  @Input() position = 'top';
-  @Input() fixed = false;
+  @Input() position = 'bottom';
+  @Input() fixed = true;
   @Input() appName = '';
   @Input() theme = 'dark';
 

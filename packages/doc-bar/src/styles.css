@@ -20,7 +20,7 @@
   position: fixed;
   left: 0;
   right: 0;
-  z-index: 1000;
+  z-index: 2147483646;
 }
 
 .doc-bar-top {
@@ -42,6 +42,11 @@
   border-top: 1px solid #1e293b;
 }
 
+.doc-bar-theme-dark.doc-bar-fixed {
+  background: transparent;
+  border: none;
+}
+
 /* Light theme */
 .doc-bar-theme-light {
   background: #f8fafc;
@@ -51,6 +56,11 @@
 .doc-bar-theme-light.doc-bar-bottom {
   border-bottom: none;
   border-top: 1px solid #e2e8f0;
+}
+
+.doc-bar-theme-light.doc-bar-fixed {
+  background: transparent;
+  border: none;
 }
 
 .doc-bar-app-name {
@@ -823,41 +833,49 @@
   background: #15803d;
 }
 
-.doc-bar-prompt-preview-label {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #475569;
-  margin-bottom: 0.5rem;
+.doc-bar-prompt-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
 }
 
-.doc-bar-prompt-preview {
+.doc-bar-prompt-item {
   background: #0f172a;
   border: 1px solid #334155;
-  border-radius: 8px;
+  border-radius: 10px;
   padding: 1rem;
-  max-height: 300px;
-  overflow-y: auto;
-  margin: 0;
 }
 
-.doc-bar-prompt-preview code {
-  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+.doc-bar-prompt-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.doc-bar-prompt-item-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+
+.doc-bar-prompt-item-file {
   font-size: 0.8rem;
-  color: #94a3b8;
-  white-space: pre-wrap;
-  word-break: break-word;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  color: #64748b;
+  background: #1e293b;
+  padding: 2px 6px;
+  border-radius: 4px;
 }
 
-.doc-bar-prompt-preview::-webkit-scrollbar {
-  width: 6px;
+.doc-bar-prompt-item .doc-bar-prompt-copy-btn {
+  margin: 0;
+  font-size: 0.85rem;
+  padding: 0.5rem 1rem;
 }
 
-.doc-bar-prompt-preview::-webkit-scrollbar-track {
-  background: #0f172a;
-}
-
-.doc-bar-prompt-preview::-webkit-scrollbar-thumb {
-  background: #334155;
-  border-radius: 3px;
+.doc-bar-link-generate {
+  color: #3b82f6;
+  font-weight: 500;
 }

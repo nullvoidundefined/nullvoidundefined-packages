@@ -5,8 +5,8 @@ import { DocBar } from './core/DocBar.js';
 export default function AppDocBar(props) {
   const {
     basePath = '/.bottomlessmargaritas/application-documentation',
-    position = 'top',
-    fixed = false,
+    position = 'bottom',
+    fixed = true,
     appName = '',
     theme = 'dark',
   } = props;

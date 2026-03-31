@@ -21,7 +21,7 @@ import { DocBar } from './core/DocBar.js';
  *   base-path, position, fixed (boolean), app-name, theme
  */
 class AppDocBarElement extends HTMLElement {
-  static observedAttributes = ['base-path', 'position', 'fixed', 'app-name', 'theme'];
+  static observedAttributes = ['base-path', 'position', 'no-fixed', 'app-name', 'theme'];
 
   #instance = null;
 
@@ -44,8 +44,8 @@ class AppDocBarElement extends HTMLElement {
   #mount() {
     this.#instance = new DocBar({
       basePath: this.getAttribute('base-path') ?? '/.bottomlessmargaritas/application-documentation',
-      position: this.getAttribute('position') ?? 'top',
-      fixed: this.hasAttribute('fixed'),
+      position: this.getAttribute('position') ?? 'bottom',
+      fixed: !this.hasAttribute('no-fixed'),
       appName: this.getAttribute('app-name') ?? '',
       theme: this.getAttribute('theme') ?? 'dark',
     });

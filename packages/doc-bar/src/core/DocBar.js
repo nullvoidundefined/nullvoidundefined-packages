@@ -49,8 +49,8 @@ export class DocBar {
   constructor(options = {}) {
     this.options = {
       basePath: '/.bottomlessmargaritas/application-documentation',
-      position: 'top',
-      fixed: false,
+      position: 'bottom',
+      fixed: true,
       appName: '',
       theme: 'dark',
       ...options,
@@ -61,9 +61,31 @@ export class DocBar {
     this._onKeyDown = this._onKeyDown.bind(this);
   }
 
-  mount(container) {
+  async mount(container) {
     this._container = container;
+    this._docsAvailable = await this._checkDocs();
     this._renderNav();
+  }
+
+  async _checkDocs() {
+    try {
+      const results = await Promise.all(
+        NAV_LINKS.map(async ({ file }) => {
+          try {
+            const res = await fetch(`${this.options.basePath}/${file}`);
+            if (!res.ok) return false;
+            const text = await res.text();
+            const version = parseDocVersion(text);
+            return version !== null && version >= DOC_FORMAT_VERSION;
+          } catch {
+            return false;
+          }
+        })
+      );
+      return results.every(Boolean);
+    } catch {
+      return false;
+    }
   }
 
   destroy() {
@@ -91,11 +113,21 @@ export class DocBar {
     }
 
     const ul = el('ul', 'doc-bar-links');
-    for (const { key, label, file } of NAV_LINKS) {
+
+    if (this._docsAvailable) {
+      for (const { key, label, file } of NAV_LINKS) {
+        const li = el('li');
+        const btn = el('button', 'doc-bar-link');
+        btn.textContent = label;
+        btn.addEventListener('click', () => this._open(key, label, file, btn));
+        li.appendChild(btn);
+        ul.appendChild(li);
+      }
+    } else {
       const li = el('li');
-      const btn = el('button', 'doc-bar-link');
-      btn.textContent = label;
-      btn.addEventListener('click', () => this._open(key, label, file, btn));
+      const btn = el('button', 'doc-bar-link doc-bar-link-generate');
+      btn.textContent = 'Generate Documents';
+      btn.addEventListener('click', () => this._openGeneratePrompt(btn));
       li.appendChild(btn);
       ul.appendChild(li);
     }
@@ -427,50 +459,121 @@ export class DocBar {
     return root;
   }
 
+  _openGeneratePrompt(btn) {
+    this._closeModal();
+    btn.classList.add('doc-bar-link-active');
+    this._activeBtn = btn;
+
+    const overlay = el('div', 'doc-bar-overlay');
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) this._closeModal();
+    });
+
+    const panel = el('div', 'doc-bar-panel', {
+      role: 'dialog',
+      'aria-modal': 'true',
+      'aria-label': 'Generate Documents',
+    });
+    panel.addEventListener('click', (e) => e.stopPropagation());
+
+    const header = el('div', 'doc-bar-panel-header');
+    const h2 = el('h2', 'doc-bar-panel-title');
+    h2.textContent = 'Generate Documents';
+    const closeBtn = el('button', 'doc-bar-close', { 'aria-label': 'Close' });
+    closeBtn.textContent = '×';
+    closeBtn.addEventListener('click', () => this._closeModal());
+    header.appendChild(h2);
+    header.appendChild(closeBtn);
+
+    const body = el('div', 'doc-bar-panel-body');
+    body.appendChild(this._buildGenerateUI());
+
+    panel.appendChild(header);
+    panel.appendChild(body);
+    overlay.appendChild(panel);
+    document.body.appendChild(overlay);
+    this._modal = overlay;
+    document.addEventListener('keydown', this._onKeyDown);
+  }
+
+  _buildGenerateUI() {
+    const wrapper = el('div', 'doc-bar-prompt-view');
+
+    const header = el('div', 'doc-bar-prompt-header');
+    const title = el('h3', 'doc-bar-prompt-title');
+    title.textContent = 'Documentation not generated yet';
+    header.appendChild(title);
+
+    const desc = el('p', 'doc-bar-prompt-desc');
+    desc.textContent = 'This project needs four documentation files. Copy each prompt below and paste it into your preferred AI assistant along with your project\'s source code to generate the documents.';
+    header.appendChild(desc);
+    wrapper.appendChild(header);
+
+    const pathInfo = el('div', 'doc-bar-prompt-path');
+    pathInfo.innerHTML = DOMPurify.sanitize(
+      `Save generated files to: <code>${this.options.basePath}/</code>`
+    );
+    wrapper.appendChild(pathInfo);
+
+    const list = el('div', 'doc-bar-prompt-list');
+
+    for (const { key, label, file } of NAV_LINKS) {
+      const prompt = PROMPTS[key];
+      const item = el('div', 'doc-bar-prompt-item');
+
+      const itemHeader = el('div', 'doc-bar-prompt-item-header');
+      const itemLabel = el('span', 'doc-bar-prompt-item-label');
+      itemLabel.textContent = label;
+      const itemFile = el('code', 'doc-bar-prompt-item-file');
+      itemFile.textContent = file;
+      itemHeader.appendChild(itemLabel);
+      itemHeader.appendChild(itemFile);
+      item.appendChild(itemHeader);
+
+      const copyBtn = el('button', 'doc-bar-prompt-copy-btn');
+      copyBtn.textContent = `Copy ${label} Prompt`;
+      copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(prompt).then(() => {
+          copyBtn.textContent = 'Copied!';
+          copyBtn.classList.add('doc-bar-prompt-copy-success');
+          setTimeout(() => {
+            copyBtn.textContent = `Copy ${label} Prompt`;
+            copyBtn.classList.remove('doc-bar-prompt-copy-success');
+          }, 2000);
+        });
+      });
+      item.appendChild(copyBtn);
+      list.appendChild(item);
+    }
+
+    wrapper.appendChild(list);
+    return wrapper;
+  }
+
   _buildPromptUI(key, reason, file) {
     const prompt = PROMPTS[key];
     const wrapper = el('div', 'doc-bar-prompt-view');
 
-    // Header message
     const header = el('div', 'doc-bar-prompt-header');
-    const icon = el('div', 'doc-bar-prompt-icon');
-    icon.textContent = reason === 'missing' ? '📄' : '🔄';
-    header.appendChild(icon);
-
     const title = el('h3', 'doc-bar-prompt-title');
-    if (reason === 'missing') {
-      title.textContent = 'Document not generated yet';
-    } else if (reason === 'unversioned') {
-      title.textContent = 'Document needs to be regenerated';
-    } else {
-      title.textContent = 'Document is outdated';
-    }
+    title.textContent = reason === 'missing' ? 'Document not generated yet' :
+      reason === 'unversioned' ? 'Document needs to be regenerated' :
+      'Document is outdated';
     header.appendChild(title);
 
     const desc = el('p', 'doc-bar-prompt-desc');
-    if (reason === 'missing') {
-      desc.textContent = `The file ${file} doesn't exist yet. Use the prompt below with your preferred AI assistant to generate it.`;
-    } else {
-      desc.textContent = `The file ${file} was generated with an older version of doc-bar. Regenerate it using the prompt below to get the latest format.`;
-    }
+    desc.textContent = reason === 'missing'
+      ? `Copy the prompt below and paste it into your preferred AI assistant along with your project's source code to generate ${file}.`
+      : `This document was generated with an older format. Copy the prompt below and regenerate ${file} to get the latest version.`;
     header.appendChild(desc);
     wrapper.appendChild(header);
 
-    // Target path info
     const pathInfo = el('div', 'doc-bar-prompt-path');
     pathInfo.innerHTML = DOMPurify.sanitize(
       `Save the output to: <code>${this.options.basePath}/${file}</code>`
     );
     wrapper.appendChild(pathInfo);
 
-    // Version stamp reminder
-    const stampInfo = el('div', 'doc-bar-prompt-stamp');
-    stampInfo.innerHTML = DOMPurify.sanitize(
-      `The generated document must start with: <code>${VERSION_COMMENT}</code>`
-    );
-    wrapper.appendChild(stampInfo);
-
-    // Copy button
     const copyBtn = el('button', 'doc-bar-prompt-copy-btn');
     copyBtn.textContent = 'Copy Prompt to Clipboard';
     copyBtn.addEventListener('click', () => {
@@ -484,17 +587,6 @@ export class DocBar {
       });
     });
     wrapper.appendChild(copyBtn);
-
-    // Prompt preview
-    const previewLabel = el('div', 'doc-bar-prompt-preview-label');
-    previewLabel.textContent = 'Generation prompt';
-    wrapper.appendChild(previewLabel);
-
-    const preview = el('pre', 'doc-bar-prompt-preview');
-    const code = el('code');
-    code.textContent = prompt;
-    preview.appendChild(code);
-    wrapper.appendChild(preview);
 
     return wrapper;
   }

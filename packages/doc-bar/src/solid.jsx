@@ -7,8 +7,8 @@ export default function AppDocBar(props) {
   createEffect(() => {
     const instance = new DocBar({
       basePath: props.basePath ?? '/.bottomlessmargaritas/application-documentation',
-      position: props.position ?? 'top',
-      fixed: props.fixed ?? false,
+      position: props.position ?? 'bottom',
+      fixed: props.fixed ?? true,
       appName: props.appName ?? '',
       theme: props.theme ?? 'dark',
     });

@@ -1,6 +1,6 @@
 # Generating Technical Summary Content
 
-This prompt defines how to generate the `technical-summary.md` file for the `App Documents/` folder. The Technical Summary is the second link in the nav bar and serves as a mid-level technical overview for developers who want to understand the system without reading the full codebase.
+This prompt defines how to generate the `technical-summary.md` file. The Technical Summary is the second link in the doc-bar and serves as a mid-level technical overview for developers who want to understand the system without reading the full codebase.
 
 ---
 
@@ -11,7 +11,7 @@ The Technical Summary answers: **"How is this app built, and what are the key te
 ## Target File
 
 ```
-App Documents/technical-summary.md
+technical-summary.md
 ```
 
 ## Structure
@@ -61,10 +61,8 @@ A section under `## Stack` organized as a markdown table:
 | ------------ | ---------------------- | ------------------------------------ |
 | Frontend     | Next.js 15 (App Router)| SSR, routing, React UI               |
 | API          | Express + TypeScript   | REST endpoints, validation           |
-| Database     | PostgreSQL (Neon)      | Persistent storage                   |
+| Database     | PostgreSQL             | Persistent storage                   |
 | Auth         | Supabase Auth          | JWT sessions, OAuth                  |
-| AI           | Claude API (Anthropic) | Structured extraction, generation    |
-| Queue        | BullMQ + Redis         | Async job processing                 |
 | Deployment   | Vercel + Railway       | Frontend hosting + API hosting       |
 ```
 
@@ -73,7 +71,7 @@ A section under `## Stack` organized as a markdown table:
 - One row per technology, not per package
 - "Purpose" column uses 3–6 word phrases, not sentences
 - Include every significant technology in the stack — don't omit the boring ones (linting, formatting)
-- Group by layer: Frontend, API/Backend, Database, Auth, AI/LLM, Infrastructure, Dev Tooling
+- Group by layer: Frontend, API/Backend, Database, Auth, Infrastructure, Dev Tooling
 
 ### 4. Key Patterns
 
@@ -81,17 +79,16 @@ A section under `## Key Patterns` with 3–6 patterns, each as a `###` subheadin
 
 A "pattern" is a recurring architectural or implementation approach used in the app. Examples:
 
-- Structured extraction with schema validation
-- SSE streaming for real-time AI responses
-- Tool calling with async job processing
-- RAG with vector search and citation
-- Multi-tenant context scoping
-- Human-in-the-loop approval flows
+- Repository pattern for data access
+- SSE streaming for real-time responses
+- Middleware pipeline for cross-cutting concerns
+- CSS custom properties for theming
+- Module-based code splitting
 
 ```markdown
-### Structured Extraction + Validation
+### Repository Pattern
 
-Claude receives unstructured text (job postings, emails) and returns JSON matching a Zod schema. The API validates every response before persisting, catching hallucinated fields, wrong types, and missing data. Failed validations trigger a retry with the validation errors fed back to the prompt.
+Database access is encapsulated in repository modules that export pure functions returning plain objects. Handlers never write SQL directly — they call repository functions. This separates HTTP concerns from data access and makes queries testable in isolation.
 ```
 
 **Rules:**
@@ -109,13 +106,12 @@ A section under `## Data Flow` describing the primary request lifecycle as a num
 ```markdown
 ## Data Flow
 
-1. **User pastes a job posting** into the frontend form
-2. **Frontend sends POST** to `/api/jobs/extract` with the raw text
-3. **API constructs a Claude prompt** with the system message and Zod schema description
-4. **Claude returns structured JSON** with extracted fields
-5. **API validates with Zod** — retries up to 2 times on validation failure
-6. **Validated data is persisted** to PostgreSQL via the job repository
-7. **API returns the structured job** to the frontend for display
+1. **User submits a form** on the frontend
+2. **Frontend sends POST** to `/api/resources` with the form data
+3. **API validates the request** using a schema validator
+4. **Service layer processes** the business logic
+5. **Repository persists** the result to the database
+6. **API returns the response** to the frontend for display
 ```
 
 **Rules:**
@@ -134,10 +130,10 @@ A section under `## API Endpoints` with a markdown table listing the key endpoin
 
 | Method | Path                    | Purpose                        |
 | ------ | ----------------------- | ------------------------------ |
-| POST   | `/api/jobs/extract`     | Extract structured job data    |
-| GET    | `/api/jobs`             | List all saved jobs            |
-| GET    | `/api/jobs/:id`         | Get a single job by ID         |
-| DELETE | `/api/jobs/:id`         | Delete a job                   |
+| POST   | `/api/resources`        | Create a new resource          |
+| GET    | `/api/resources`        | List all resources             |
+| GET    | `/api/resources/:id`    | Get a single resource by ID    |
+| DELETE | `/api/resources/:id`    | Delete a resource              |
 ```
 
 **Rules:**
@@ -145,49 +141,22 @@ A section under `## API Endpoints` with a markdown table listing the key endpoin
 - Only list the endpoints that exist in the app — don't invent CRUD operations that aren't implemented
 - Method, path, and a 3–6 word purpose description
 - If the app has no REST API (e.g., it's frontend-only), skip this section entirely
-- Group related endpoints together (jobs, auth, settings)
+- Group related endpoints together
 
 ### 7. Database Schema
 
 A section under `## Database Schema` describing the key tables. For each table, a brief markdown table showing columns:
 
-```markdown
-## Database Schema
-
-### `jobs`
-
-| Column       | Type         | Notes                   |
-| ------------ | ------------ | ----------------------- |
-| `id`         | `uuid`       | Primary key, generated  |
-| `title`      | `text`       | Extracted job title     |
-| `company`    | `text`       | Extracted company name  |
-| `salary_min` | `integer`    | Nullable                |
-| `salary_max` | `integer`    | Nullable                |
-| `created_at` | `timestamptz`| Default `now()`         |
-```
-
 **Rules:**
 
-- Only include tables that the app creates and owns — not third-party tables (Supabase auth tables, etc.)
+- Only include tables that the app creates and owns — not third-party tables
 - Column, type, and a brief note (nullable, default, foreign key, etc.)
 - If the app has no database, skip this section entirely
-- Don't list every column of every table — focus on the interesting ones. Omit standard audit columns if there are many tables.
+- Don't list every column of every table — focus on the interesting ones
 
 ### 8. Environment Variables
 
 A section under `## Environment Variables` as a markdown table:
-
-```markdown
-## Environment Variables
-
-| Variable              | Required | Description                      |
-| --------------------- | -------- | -------------------------------- |
-| `DATABASE_URL`        | Yes      | Neon PostgreSQL connection string|
-| `ANTHROPIC_API_KEY`   | Yes      | Claude API key                   |
-| `SUPABASE_URL`        | Yes      | Supabase project URL             |
-| `SUPABASE_ANON_KEY`   | Yes      | Supabase anonymous key           |
-| `REDIS_URL`           | No       | Redis connection (for BullMQ)    |
-```
 
 **Rules:**
 
@@ -204,9 +173,9 @@ A section under `## Decisions` with 3–5 bullet points explaining the most impo
 ```markdown
 ## Decisions
 
-- **Zod over Joi/Yup** — TypeScript-first with `z.infer<>` for zero-drift between schema and types. Parse-don't-validate philosophy matches the extraction pattern.
-- **No ORM** — Raw SQL via a thin repository layer. The queries are simple enough that an ORM adds complexity without benefit. Repositories return plain objects, not model instances.
-- **SSE over WebSocket** — Unidirectional streaming (server → client) is all that's needed for AI responses. SSE is simpler, works through proxies, and auto-reconnects natively.
+- **SCSS over Tailwind** — Full control over the design system with minimal dependencies. CSS modules provide scoping without runtime cost.
+- **No ORM** — Raw SQL via a thin repository layer. The queries are simple enough that an ORM adds complexity without benefit.
+- **Flat config ESLint** — Uses ESLint 9's new format for simpler composition and better TypeScript integration.
 ```
 
 **Rules:**
@@ -230,15 +199,14 @@ A section under `## Decisions` with 3–5 bullet points explaining the most impo
 
 ---
 
-## Example: Generating for a New App
+## Generating for a New Project
 
-1. Read the app's CLAUDE.md, README, package.json, and source code
+1. Read the project's configuration files, README, and source code
 2. Map the architecture: what are the pieces and how do they connect?
-3. Identify the key patterns — what makes this app technically interesting?
+3. Identify the key patterns — what makes this project technically interesting?
 4. Trace the primary data flow from user action to stored result
 5. Catalog the API endpoints, database tables, and environment variables
 6. Identify the 3–5 most important architectural decisions
 7. Write the document following the structure above
 8. Verify: could a senior engineer read this and have a solid mental model of the system? If not, add detail.
 9. Verify: is anything duplicating the Summary (too high-level) or the Technical Overview (too detailed)? Adjust.
-10. Save to `App Documents/technical-summary.md`

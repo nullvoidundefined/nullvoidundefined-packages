@@ -3,8 +3,8 @@
   import { DocBar } from './core/DocBar.js';
 
   export let basePath = '/.bottomlessmargaritas/application-documentation';
-  export let position = 'top';
-  export let fixed = false;
+  export let position = 'bottom';
+  export let fixed = true;
   export let appName = '';
   export let theme = 'dark';
 

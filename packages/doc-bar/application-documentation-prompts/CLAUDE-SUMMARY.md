@@ -1,6 +1,6 @@
 # Generating Summary Content
 
-This prompt defines how to generate the `summary.md` file for the `App Documents/` folder. The Summary is the first link in the nav bar and serves as a high-level, non-technical overview of the application for a general audience.
+This prompt defines how to generate the `summary.md` file. The Summary is the first link in the doc-bar and serves as a high-level, non-technical overview of the application for a general audience.
 
 ---
 
@@ -11,7 +11,7 @@ The Summary document answers: **"What does this app do, and why does it matter?"
 ## Target File
 
 ```
-App Documents/summary.md
+summary.md
 ```
 
 ## Structure
@@ -67,9 +67,9 @@ A section under `## Key Features` with 4–6 features, each as a subheading (`##
 - Each feature description must be self-contained — no forward references
 - No bullet lists inside features — use prose
 
-**Good:** `### Smart Job Extraction` — "Paste any job posting or recruiter email and get a clean, structured breakdown of title, company, salary range, and requirements in seconds."
+**Good:** `### Instant Search` — "Find any document across your entire workspace in milliseconds. Results update as you type with highlighted matches."
 
-**Bad:** `### Zod Validation Pipeline` — "Uses Zod schemas to validate LLM output against typed interfaces."
+**Bad:** `### ElasticSearch Integration` — "Uses ElasticSearch with BM25 ranking to query the documents index."
 
 ### 5. How It Works
 
@@ -88,7 +88,7 @@ A section under `## How It Works` with 3–5 numbered steps describing the user 
 **Rules:**
 
 - Steps describe the user's journey, not the system architecture
-- Use active voice: "You paste...", "The app extracts...", "You review..."
+- Use active voice: "You upload...", "The app processes...", "You review..."
 - Keep it to the happy path — no error handling, edge cases, or branching
 - Maximum 5 steps — if the flow is longer, combine steps
 
@@ -99,14 +99,14 @@ A section under `## Use Cases` with 3–4 concrete scenarios. Each is a `###` su
 ```markdown
 ## Use Cases
 
-### Job Seekers Tracking Applications
-You're applying to 30+ jobs a week and losing track. Paste each posting into the tracker and get a clean dashboard of every application with status, salary, and follow-up dates.
+### Teams Managing Shared Documents
+Your team collaborates on hundreds of documents and needs a single place to search, organize, and review them. Upload your files and get an instant searchable archive with version history.
 ```
 
 **Rules:**
 
 - Each use case tells a mini-story: who, situation, how the app helps
-- Use second person ("You're...") or third person ("A recruiter needs...")
+- Use second person ("You're...") or third person ("A developer needs...")
 - Concrete and specific — avoid generic "useful for teams" language
 - Distinct scenarios — don't repeat the same use case in different words
 
@@ -117,7 +117,7 @@ A section under `## Built With` listing the major technologies as a simple, read
 ```markdown
 ## Built With
 
-Built with React and Express on Node.js, backed by PostgreSQL on Neon, with Claude powering the AI features.
+Built with React and Express on Node.js, backed by PostgreSQL, with Claude powering the AI features.
 ```
 
 **Rules:**
@@ -143,14 +143,11 @@ Built with React and Express on Node.js, backed by PostgreSQL on Neon, with Clau
 
 ---
 
-## Example: Generating for a New App
+## Generating for a New Project
 
-If the app is "Job Tracker AI" with structured extraction and Zod validation:
-
-1. Read the app's README, CLAUDE.md, and source code to understand what it does
+1. Read the project's README, configuration files, and source code to understand what it does
 2. Identify the user-facing features (not the technical implementation)
 3. Map out the user flow from first interaction to final result
 4. Write the summary following the structure above
 5. Verify: could a non-technical person read this and understand the app? If not, simplify.
 6. Verify: does every section exist and follow the rules? Check length is 400–600 words.
-7. Save to `App Documents/summary.md`

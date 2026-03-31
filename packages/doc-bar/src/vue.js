@@ -5,8 +5,8 @@ export default defineComponent({
   name: 'AppDocBar',
   props: {
     basePath: { type: String, default: '/.bottomlessmargaritas/application-documentation' },
-    position: { type: String, default: 'top' },
-    fixed: { type: Boolean, default: false },
+    position: { type: String, default: 'bottom' },
+    fixed: { type: Boolean, default: true },
     appName: { type: String, default: '' },
     theme: { type: String, default: 'dark' },
   },

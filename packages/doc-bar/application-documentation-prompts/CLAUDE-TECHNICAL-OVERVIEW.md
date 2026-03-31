@@ -1,6 +1,6 @@
 # Generating Technical Overview Content
 
-This prompt defines how to generate the `technical-overview.md` file for the `App Documents/` folder. The Technical Overview is the third link in the nav bar and serves as a deep-dive reference document — the most detailed and comprehensive of the four content types.
+This prompt defines how to generate the `technical-overview.md` file. The Technical Overview is the third link in the doc-bar and serves as a deep-dive reference document — the most detailed and comprehensive of the four content types.
 
 ---
 
@@ -17,12 +17,12 @@ Think of it this way:
 ## Target File
 
 ```
-App Documents/technical-overview.md
+technical-overview.md
 ```
 
 ## Structure
 
-Generate the markdown file with these sections. Unlike the Summary and Technical Summary, the Technical Overview is longer and more detailed. Not every section applies to every app — skip sections that don't apply, but include all that do.
+Generate the markdown file with these sections. Unlike the Summary and Technical Summary, the Technical Overview is longer and more detailed. Not every section applies to every project — skip sections that don't apply, but include all that do.
 
 ### Version Stamp (required first line)
 
@@ -53,7 +53,6 @@ Generate a markdown table of contents with links to each section. This document 
 - [Frontend](#frontend)
 - [API Layer](#api-layer)
 - [Database](#database)
-- [AI Integration](#ai-integration)
 - [Authentication](#authentication)
 - [Error Handling](#error-handling)
 - [Testing](#testing)
@@ -69,19 +68,7 @@ A section under `## Architecture` with a detailed description of the system arch
 - Explain the communication protocols between components
 - Describe the deployment topology in detail
 - If there's a monorepo, explain the package boundaries and what each package owns
-- Include an ASCII architecture diagram if helpful:
-
-```markdown
-┌─────────────┐     ┌─────────────┐     ┌──────────────┐
-│   Next.js    │────▶│   Express   │────▶│  PostgreSQL   │
-│   Frontend   │     │     API     │     │   (Neon)      │
-└─────────────┘     └──────┬──────┘     └──────────────┘
-                           │
-                    ┌──────▼──────┐
-                    │   Claude    │
-                    │    API      │
-                    └─────────────┘
-```
+- Include an ASCII architecture diagram if helpful
 
 **Rules:**
 
@@ -93,44 +80,9 @@ A section under `## Architecture` with a detailed description of the system arch
 
 A section under `## Project Structure` with the complete directory tree of the project, annotated:
 
-```markdown
-## Project Structure
-
-\```
-packages/
-├── api/
-│   ├── src/
-│   │   ├── handlers/          # Express route handlers (one per resource)
-│   │   │   ├── jobHandler.ts  # POST /extract, GET /, GET /:id, DELETE /:id
-│   │   │   └── healthHandler.ts
-│   │   ├── services/          # Business logic (orchestration, AI calls)
-│   │   │   └── extractionService.ts
-│   │   ├── repositories/      # Database access (raw SQL, returns plain objects)
-│   │   │   └── jobRepository.ts
-│   │   ├── middleware/         # Auth, error handling, CORS, rate limiting
-│   │   ├── schemas/           # Zod schemas (shared validation)
-│   │   ├── config/            # Environment, database pool, Redis client
-│   │   └── index.ts           # Express app setup + route registration
-│   ├── package.json
-│   └── tsconfig.json
-├── web/
-│   ├── src/
-│   │   ├── app/               # Next.js App Router pages
-│   │   ├── components/        # Shared React components
-│   │   ├── hooks/             # Custom React hooks
-│   │   ├── lib/               # API client, query client, utilities
-│   │   └── types/             # Frontend TypeScript types
-│   └── package.json
-└── common/                    # Shared types and schemas
-    └── src/
-        ├── types.ts
-        └── schemas.ts
-\```
-```
-
 **Rules:**
 
-- Show the actual directory structure of the app — don't invent one
+- Show the actual directory structure of the project — don't invent one
 - Annotate key directories and files with inline comments (`# purpose`)
 - Go 3–4 levels deep, deeper for important directories
 - Omit `node_modules`, `.git`, build output directories, and lockfiles
@@ -160,31 +112,11 @@ A section under `## Frontend` covering:
 
 #### Key Components (Detail)
 
-For the 3–5 most important or complex components, provide a detailed description:
-
-```markdown
-### `ChatBox`
-
-The main chat interface component. Manages message history, streaming responses, and tool-use display.
-
-**State:**
-- `messages` — array of message objects, managed via `useReducer`
-- `isStreaming` — boolean, true while an SSE response is active
-- `toolProgress` — map of tool call IDs to their status
-
-**Behavior:**
-- On submit, appends the user message and opens an EventSource to `/api/chat/stream`
-- Streaming tokens are appended to the last assistant message in real-time
-- Tool calls create progress indicators that update as results arrive
-- Auto-scrolls to bottom on new content via `useRef` on the message container
-
-**Key implementation detail:** The EventSource is stored in a `useRef` to survive re-renders. Cleanup on unmount calls `.close()` to prevent orphaned connections.
-```
+For the 3–5 most important or complex components, provide a detailed description including state, behavior, and key implementation details.
 
 **Rules:**
 
 - Focus on components that are architecturally interesting — not every button and form
-- Describe state, behavior, and key implementation details
 - Mention any non-obvious patterns or gotchas
 - Include the component name as an inline code heading
 
@@ -192,31 +124,9 @@ The main chat interface component. Manages message history, streaming responses,
 
 A section under `## API Layer` covering:
 
-#### Layered Architecture
-
-Explain the handler → service → repository pattern (or whatever pattern the app uses):
-
-- **Handlers** — HTTP concerns: parse request, call service, format response
-- **Services** — Business logic: orchestration, AI calls, validation
-- **Repositories** — Data access: SQL queries, returns plain objects
-
-#### Endpoint Details
-
-For each endpoint or endpoint group, provide:
-
-- Method, path, and purpose
-- Request body/params shape
-- Response shape
-- Error cases and status codes
-- Any middleware applied (auth, rate limiting, validation)
-
-#### Middleware
-
-List and explain each middleware:
-
-- What it does
-- What routes it applies to
-- Configuration or environment variables it depends on
+- Layered architecture (handler → service → repository, or whatever pattern the app uses)
+- Endpoint details: method, path, request/response shapes, error cases, middleware
+- Middleware list with what each does and where it applies
 
 ### 7. Database
 
@@ -228,21 +138,7 @@ A section under `## Database` covering:
 - Connection pooling configuration
 - Any extensions (pgvector, pg_trgm, etc.)
 
-### 8. AI Integration
-
-A section under `## AI Integration` covering:
-
-- Which AI provider and model(s) are used
-- System prompt strategy (where prompts live, how they're constructed)
-- Input/output schemas for AI calls
-- Retry and error handling for AI responses
-- Streaming implementation details (if applicable)
-- Token usage and cost considerations
-- Any prompt chaining or multi-step AI workflows
-
-This section should include actual prompt templates or describe their structure in detail. The AI integration is often the most architecturally interesting part of these apps.
-
-### 9. Authentication
+### 8. Authentication
 
 A section under `## Authentication` covering:
 
@@ -254,7 +150,7 @@ A section under `## Authentication` covering:
 
 Skip this section if the app has no authentication.
 
-### 10. Error Handling
+### 9. Error Handling
 
 A section under `## Error Handling` covering:
 
@@ -262,44 +158,77 @@ A section under `## Error Handling` covering:
 - Error response format
 - Frontend error display (toast, inline, error boundaries)
 - Logging approach
-- How AI errors are handled differently from regular errors
 
-### 11. Testing
+### 10. Testing
 
-A section under `## Testing` covering:
-
-- Testing framework and tools
-- Test structure and naming conventions
-- What is tested (unit, integration, e2e)
-- How to run tests
-- Any test utilities or helpers
+A section under `## Testing` covering test framework, structure, what is tested, how to run tests.
 
 Skip this section if the app has no tests.
 
-### 12. Deployment
+### 11. Deployment
 
-A section under `## Deployment` covering:
+A section under `## Deployment` covering where each component is deployed, CI/CD, env var management, build commands.
 
-- Where each component is deployed
-- CI/CD pipeline (GitHub Actions, etc.)
-- Environment variable management per environment
-- Build and deploy commands
-- Any infrastructure-as-code (Terraform, Pulumi, etc.)
+### 12. Configuration Reference
 
-### 13. Configuration Reference
+A final section under `## Configuration` with a comprehensive table of every configuration value.
 
-A final section under `## Configuration` with a comprehensive table of every configuration value:
+---
+
+## External Documentation Links
+
+**This is important.** When the Technical Overview references specific technologies, patterns, or concepts that a developer might want to learn more about, include links to the official documentation or authoritative resources. These links add significant value for developers who are unfamiliar with a particular technology in the stack.
+
+### When to Include Links
+
+Include a link when:
+
+- Introducing a technology for the first time in the document (e.g., first mention of a framework, library, or service)
+- Describing a specific pattern or concept that has canonical documentation (e.g., React Server Components, CSS custom properties, middleware pipelines)
+- Referencing a configuration option or API that has dedicated docs (e.g., Next.js `next.config.ts` options, ESLint rule documentation)
+- Explaining an architectural decision where the alternative is well-documented (link to both)
+
+### How to Include Links
+
+- Use inline markdown links: `[React Server Components](https://react.dev/reference/rsc/server-components)`
+- Link to the most specific page possible — not the homepage, but the relevant concept or API page
+- Prefer official documentation over blog posts or tutorials
+- Include links naturally in the prose — don't create a separate "Resources" section
+
+### Examples
 
 ```markdown
-## Configuration
+The API uses the [repository pattern](https://martinfowler.com/eaaCatalog/repository.html) to separate data access from business logic.
 
-| Variable              | Required | Default | Description                              |
-| --------------------- | -------- | ------- | ---------------------------------------- |
-| `DATABASE_URL`        | Yes      | —       | PostgreSQL connection string              |
-| `ANTHROPIC_API_KEY`   | Yes      | —       | Claude API key                            |
-| `PORT`                | No       | `3001`  | API server port                           |
-| `NODE_ENV`            | No       | `development` | Environment mode                    |
+Authentication is handled by [Supabase Auth](https://supabase.com/docs/guides/auth) using JWT tokens stored in HTTP-only cookies.
+
+The frontend uses [CSS Modules](https://github.com/css-modules/css-modules) for component-scoped styling, which avoids class name collisions without runtime overhead.
+
+State management follows the [TanStack Query](https://tanstack.com/query/latest/docs/framework/react/overview) pattern where server state is cached and synchronized automatically.
+
+Error boundaries use React's [`ErrorBoundary`](https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary) API to catch rendering errors without crashing the entire app.
 ```
+
+### Common Documentation Sources
+
+Use these as reference points when linking:
+
+| Technology | Documentation Root |
+|---|---|
+| React | `https://react.dev/reference/react` |
+| Next.js | `https://nextjs.org/docs` |
+| TypeScript | `https://www.typescriptlang.org/docs/handbook` |
+| Node.js | `https://nodejs.org/docs/latest/api` |
+| Express | `https://expressjs.com/en/guide` |
+| PostgreSQL | `https://www.postgresql.org/docs/current` |
+| ESLint | `https://eslint.org/docs/latest` |
+| Prettier | `https://prettier.io/docs/en` |
+| Sass/SCSS | `https://sass-lang.com/documentation` |
+| Tailwind CSS | `https://tailwindcss.com/docs` |
+| Supabase | `https://supabase.com/docs` |
+| Vercel | `https://vercel.com/docs` |
+| Martin Fowler (patterns) | `https://martinfowler.com/eaaCatalog` |
+| MDN Web Docs (web APIs) | `https://developer.mozilla.org/en-US/docs/Web` |
 
 ---
 
@@ -309,20 +238,21 @@ A final section under `## Configuration` with a comprehensive table of every con
 2. **Markdown only:** No HTML, no JSX, no frontmatter
 3. **Code blocks are encouraged** — unlike the Summary and Technical Summary, the Technical Overview should include representative code snippets showing key patterns. Use fenced code blocks with language tags.
 4. **Keep code snippets focused** — show the pattern, not the entire file. 5–20 lines per snippet. Add a comment above explaining what the snippet demonstrates.
-5. **Headings hierarchy:** `#` for title, `##` for major sections, `###` for subsections, `####` for sub-subsections
-6. **Tables** for structured reference data (schema, config, endpoints)
-7. **Tone:** Precise, thorough, reference-style. Write as if creating internal documentation that the team will consult daily. No hand-holding, but no assumptions about project-specific knowledge.
+5. **External documentation links are encouraged** — link to official docs for technologies, patterns, and concepts. See the External Documentation Links section above.
+6. **Headings hierarchy:** `#` for title, `##` for major sections, `###` for subsections, `####` for sub-subsections
+7. **Tables** for structured reference data (schema, config, endpoints)
+8. **Tone:** Precise, thorough, reference-style. Write as if creating internal documentation that the team will consult daily. No hand-holding, but no assumptions about project-specific knowledge.
 
 ---
 
-## Example: Generating for a New App
+## Generating for a New Project
 
 1. Read every source file in the project — this document requires full codebase knowledge
 2. Map the complete architecture: components, layers, data flow, external services
 3. For each section, extract the relevant details from the source code
 4. Include code snippets that demonstrate key patterns (not boilerplate)
-5. Document every configuration value, environment variable, and deployment step
-6. Write the document following the structure above, skipping sections that don't apply
-7. Verify: could a developer who has never seen this codebase modify any part of it using only this document? If not, add detail.
-8. Verify: are there implementation details here that aren't in the Technical Summary? (There should be many.) Are there high-level explanations here that belong in the Summary instead? (There should be none.)
-9. Save to `App Documents/technical-overview.md`
+5. Add links to official documentation for every significant technology, pattern, or concept referenced
+6. Document every configuration value, environment variable, and deployment step
+7. Write the document following the structure above, skipping sections that don't apply
+8. Verify: could a developer who has never seen this codebase modify any part of it using only this document? If not, add detail.
+9. Verify: are external links present for key technologies and patterns? A developer should be able to click through to learn more about anything unfamiliar.
