@@ -5,6 +5,11 @@ export interface DocBarOptions {
     appName?: string;
     theme?: 'dark' | 'light';
 }
+export interface NavLink {
+    key: string;
+    label: string;
+    file: string;
+}
 export declare class DocBar {
     private options;
     private _container;

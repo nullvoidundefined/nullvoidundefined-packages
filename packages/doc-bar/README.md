@@ -1,326 +1,149 @@
 # @bottomlessmargaritas/doc-bar
 
-A narrow navigation bar that links to app documentation modals: **Summary**, **Technical Summary**, **Technical Overview**, and **Quiz**. Clicking a link opens a full-page modal with a markdown reader or an interactive quiz. Content is loaded at runtime from markdown files in your app's public directory.
+Embed interactive documentation directly in your app. A sticky navigation bar that opens modals for **Summary**, **Technical Summary**, **Technical Overview**, **Quiz**, and **Code Review** — all rendered from markdown files in your public directory.
 
-Exports for React, Vue, Svelte, SolidJS, Preact, Angular, and Web Components — all thin wrappers over a shared vanilla JS core.
+If no documentation exists yet, the bar shows a single **"Generate Documents"** button that gives you a prompt to copy into your preferred AI assistant. Your assistant generates the docs from your source code. No API keys needed — everything stays local.
+
+Built for junior developers, hobbyists, and anyone learning unfamiliar codebases.
 
 ---
 
-## Installation
+## Install
 
 ```bash
 npm install @bottomlessmargaritas/doc-bar
 ```
 
----
+## Quick Start (React)
 
-## Quick start
-
-### 1. Add the styles
-
-Import the stylesheet once, anywhere in your app:
-
-```js
-import '@bottomlessmargaritas/doc-bar/styles.css';
-```
-
-### 2. Place your content files
-
-Create a `.bottomlessmargaritas/application-documentation/` folder inside your app's **public** directory and add four markdown files:
-
-```
-public/
-└── .bottomlessmargaritas/
-    └── application-documentation/
-        ├── summary.md
-        ├── technical-summary.md
-        ├── technical-overview.md
-        └── quiz.md
-```
-
-The bar fetches these files at runtime via `fetch()`. They are never bundled.
-
-> **Generating content** — each file has a corresponding Claude prompt in `application-documentation-prompts/` (shipped with this package). Read the relevant prompt file before generating content for a new app.
-
-### 3. Mount the component
-
-Pick the export for your framework (see below) and drop the component into your layout.
-
----
-
-## Framework usage
-
-### React
-
-```jsx
+```tsx
+'use client'; // Next.js only
 import AppDocBar from '@bottomlessmargaritas/doc-bar';
 import '@bottomlessmargaritas/doc-bar/styles.css';
 
-export default function Layout({ children }) {
-  return (
-    <>
-      <AppDocBar appName="My App" fixed position="top" theme="dark" />
-      {children}
-    </>
-  );
+export default function DocBar() {
+  return <AppDocBar appName="My App" />;
 }
 ```
 
-### Vue
+Drop that component anywhere in your layout. The bar appears fixed to the bottom of the viewport.
 
-```vue
-<script setup>
-import AppDocBar from '@bottomlessmargaritas/doc-bar/vue';
-import '@bottomlessmargaritas/doc-bar/styles.css';
-</script>
-
-<template>
-  <AppDocBar app-name="My App" fixed theme="dark" />
-  <slot />
-</template>
-```
-
-### Svelte
-
-```svelte
-<script>
-  import AppDocBar from '@bottomlessmargaritas/doc-bar/svelte';
-  import '@bottomlessmargaritas/doc-bar/styles.css';
-</script>
-
-<AppDocBar appName="My App" fixed theme="dark" />
-<slot />
-```
-
-### SolidJS
-
-```jsx
-import AppDocBar from '@bottomlessmargaritas/doc-bar/solid';
-import '@bottomlessmargaritas/doc-bar/styles.css';
-
-export default function Layout(props) {
-  return (
-    <>
-      <AppDocBar appName="My App" fixed theme="dark" />
-      {props.children}
-    </>
-  );
-}
-```
-
-### Preact
-
-```jsx
-import AppDocBar from '@bottomlessmargaritas/doc-bar/preact';
-import '@bottomlessmargaritas/doc-bar/styles.css';
-
-export default function Layout({ children }) {
-  return (
-    <>
-      <AppDocBar appName="My App" fixed theme="dark" />
-      {children}
-    </>
-  );
-}
-```
-
-### Angular
-
-The Angular export ships as TypeScript source and is compiled by Angular CLI when you build your app.
-
-**1. Configure Angular CLI to compile the package source**
-
-In `tsconfig.app.json`, add the source file to `include`:
-
-```json
-{
-  "include": [
-    "src/**/*.ts",
-    "node_modules/@bottomlessmargaritas/doc-bar/src/angular.ts",
-    "node_modules/@bottomlessmargaritas/doc-bar/src/core/**/*.ts"
-  ]
-}
-```
-
-**2. Import the standalone component**
-
-```typescript
-// app.component.ts
-import { Component } from '@angular/core';
-import { AppDocBarComponent } from '@bottomlessmargaritas/doc-bar/angular';
-
-@Component({
-  standalone: true,
-  imports: [AppDocBarComponent],
-  template: `
-    <app-doc-bar appName="My App" theme="dark" [fixed]="true"></app-doc-bar>
-    <router-outlet />
-  `,
-})
-export class AppComponent {}
-```
-
-**NgModule apps (Angular < 14)**
-
-```typescript
-import { NgModule } from '@angular/core';
-import { AppDocBarModule } from '@bottomlessmargaritas/doc-bar/angular';
-
-@NgModule({
-  imports: [AppDocBarModule],
-})
-export class AppModule {}
-```
-
-> **Prefer Web Components for Angular?** The `web-component` export requires no TypeScript compilation and works in any Angular version with no configuration beyond `CUSTOM_ELEMENTS_SCHEMA`.
-
-### Web Components
-
-Works in any framework or plain HTML. This is the recommended approach for Angular apps that don't want to configure TypeScript compilation of `node_modules`.
-
-**Register and use in plain HTML:**
-
-```html
-<script type="module">
-  import '@bottomlessmargaritas/doc-bar/web-component';
-  import '@bottomlessmargaritas/doc-bar/styles.css';
-</script>
-
-<app-doc-bar app-name="My App" theme="dark" fixed></app-doc-bar>
-```
-
-**Angular with Web Components:**
-
-```typescript
-// main.ts
-import '@bottomlessmargaritas/doc-bar/web-component';
-
-// app.module.ts
-import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-
-@NgModule({
-  schemas: [CUSTOM_ELEMENTS_SCHEMA],
-})
-export class AppModule {}
-```
-
-```html
-<!-- template -->
-<app-doc-bar app-name="My App" theme="dark" fixed></app-doc-bar>
-```
+If your docs aren't generated yet, click **"Generate Documents"**, copy the prompt, paste it into Claude/ChatGPT/your AI of choice, and save the output files.
 
 ---
 
-## Props / attributes
+## Framework Exports
 
-All framework components accept the same options. Web Components use kebab-case attributes.
+| Framework | Import |
+|-----------|--------|
+| React | `import AppDocBar from '@bottomlessmargaritas/doc-bar'` |
+| Vue | `import AppDocBar from '@bottomlessmargaritas/doc-bar/vue'` |
+| Svelte | `import AppDocBar from '@bottomlessmargaritas/doc-bar/svelte'` |
+| SolidJS | `import AppDocBar from '@bottomlessmargaritas/doc-bar/solid'` |
+| Preact | `import AppDocBar from '@bottomlessmargaritas/doc-bar/preact'` |
+| Angular | `import { AppDocBarComponent } from '@bottomlessmargaritas/doc-bar/angular'` |
+| Web Component | `import '@bottomlessmargaritas/doc-bar/web-component'` → `<app-doc-bar>` |
+| Vanilla JS | `import { DocBar, inject } from '@bottomlessmargaritas/doc-bar/vanilla'` |
 
-| Prop (JS) | Attribute (HTML) | Type | Default | Description |
-|---|---|---|---|---|
-| `basePath` | `base-path` | `string` | `/.bottomlessmargaritas/application-documentation` | Public path where markdown files are served |
-| `position` | `position` | `'top' \| 'bottom'` | `'top'` | Which edge of the page the bar sits on |
-| `fixed` | `fixed` | `boolean` | `false` | `position: fixed` — bar sticks to the viewport edge |
-| `appName` | `app-name` | `string` | `''` | App name shown at the left of the bar |
-| `theme` | `theme` | `'dark' \| 'light'` | `'dark'` | Color scheme |
+All exports require the CSS: `import '@bottomlessmargaritas/doc-bar/styles.css'`
 
 ---
 
-## Content files
+## Props
 
-### File → modal mapping
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `appName` | `string` | `''` | App name shown in the nav bar |
+| `position` | `'top' \| 'bottom'` | `'bottom'` | Which edge the bar sits on |
+| `fixed` | `boolean` | `true` | Stick to viewport edge (transparent, hover-to-reveal) |
+| `theme` | `'dark' \| 'light'` | `'dark'` | Color scheme |
+| `basePath` | `string` | `/.bottomlessmargaritas/application-documentation` | Path to doc files |
 
-| File | Nav label | Modal |
-|---|---|---|
-| `summary.md` | Summary | Markdown reader |
-| `technical-summary.md` | Technical Summary | Markdown reader |
-| `technical-overview.md` | Technical Overview | Markdown reader |
-| `quiz.md` | Quiz | Interactive quiz |
+---
 
-### Markdown support
+## Documentation Files
 
-The markdown reader supports: headings, bold, italic, inline code, fenced code blocks, links, images, unordered lists, ordered lists, blockquotes, and horizontal rules. All rendered HTML is sanitized with DOMPurify.
+Place markdown files in your public directory at the `basePath` location:
 
-### Quiz format
+```
+public/.bottomlessmargaritas/application-documentation/
+├── summary.md              # Non-technical overview
+├── technical-summary.md    # Architecture and stack
+├── technical-overview.md   # Deep implementation reference
+├── quiz.md                 # Interactive knowledge quiz
+└── review.md               # Code review with severity badges
+```
 
-Quiz questions must follow this format exactly:
+Each file must start with a version stamp on line 1:
+
+```markdown
+<!-- @bottomlessmargaritas/doc-bar format:1 -->
+```
+
+If any file is missing or lacks the stamp, the bar shows **"Generate Documents"** instead of the nav links.
+
+### Quiz Format
 
 ```markdown
 **1. What does this component do?**
+@ easy
 - A) Renders a footer
-- **B) Renders a nav bar with documentation modals**
+- **B) Renders a nav bar**
 - C) Renders a sidebar
 - D) Renders a breadcrumb
 
-? This is an optional clarification shown before answering.
+? Clarification shown before answering (must not hint at the answer).
 
-> This is the explanation shown after answering. It can span
-> multiple lines by starting each line with "> ".
+> Explanation shown after answering. Can include [links](https://example.com).
 ```
 
-- The correct answer is marked with `**bold**`
-- `?` lines are shown as a clarification hint before the user answers
-- `>` lines are shown as an explanation after the user answers
-- Questions can be answered in any order — all questions are visible at once
-- A letter grade and score appear after all questions are answered
+Questions are displayed one at a time, ordered by difficulty (easy → hard), with a progress bar, score tracking, and a results screen with letter grades.
+
+### Review Format
+
+Review headings with severity keywords render as colored badges:
+
+```markdown
+### SQL Injection Risk — CRITICAL
+### Missing Error Boundary — HIGH
+### Unused Import — LOW
+```
+
+Supported levels: **CRITICAL** (red), **HIGH** (orange), **MEDIUM** (amber), **LOW** (green), **INFO** (blue).
 
 ---
 
-## Generating content with Claude
+## Vanilla JS
 
-This package ships prompt files in `application-documentation-prompts/` that define exactly how to generate each content file. Before generating content for a new app, read the relevant prompt:
+```js
+import { DocBar, inject } from '@bottomlessmargaritas/doc-bar/vanilla';
+import '@bottomlessmargaritas/doc-bar/styles.css';
 
-| Prompt file | Generates | Content type |
-|---|---|---|
-| `CLAUDE-SUMMARY.md` | `summary.md` | Non-technical overview, 400–600 words |
-| `CLAUDE-TECHNICAL-SUMMARY.md` | `technical-summary.md` | Architectural overview, 600–900 words |
-| `CLAUDE-TECHNICAL-OVERVIEW.md` | `technical-overview.md` | Deep-dive reference, 1500–3000 words |
-| `CLAUDE-QUIZ.md` | `quiz.md` | 10–20 quiz questions |
+// Auto-inject at bottom of page
+inject({ appName: 'My App' });
 
-The prompts are in `node_modules/@bottomlessmargaritas/doc-bar/application-documentation-prompts/`.
+// Or mount manually
+const bar = new DocBar({ appName: 'My App' });
+bar.mount(document.getElementById('doc-bar'));
+bar.destroy(); // cleanup
+```
 
 ---
 
 ## Architecture
 
-All logic lives in the vanilla JS core. Framework exports are thin wrappers that mount and destroy a `DocBar` instance.
+TypeScript source with a framework-agnostic core. All framework exports are thin wrappers that mount/destroy a `DocBar` instance.
 
 ```
-src/
-├── core/
-│   ├── DocBar.js          # Vanilla JS class — nav bar, modals, markdown, quiz
-│   ├── markdown.js        # Markdown → sanitized HTML (no dependencies)
-│   └── parseQuiz.js       # Quiz markdown parser
-├── react.jsx              # useEffect mount/destroy
-├── vue.js                 # onMounted/onUnmounted mount/destroy
-├── svelte.svelte          # onMount + reactive $: remount
-├── solid.jsx              # createEffect + onCleanup
-├── preact.js              # useEffect + h() (no Preact plugin needed)
-├── angular.ts             # TypeScript source — compiled by Angular CLI
-├── web-component.js       # Custom element — works everywhere
-└── styles.css             # All styles: nav bar, modals, markdown reader, quiz
+src/core/
+├── DocBar.ts           # Main class — nav, modals, doc checking
+├── QuizRenderer.ts     # Quiz state machine (start → questions → results)
+├── PromptUI.ts         # Generate/regenerate prompt modals
+├── dom.ts              # Shared DOM helpers
+├── markdown.ts         # Markdown → sanitized HTML with severity badges
+├── parseQuiz.ts        # Quiz markdown parser with difficulty sorting
+├── prompts.ts          # Embedded generation prompts (bundled at build)
+└── constants.ts        # Shared default values
 ```
 
-The modal appends to `document.body` at `z-index: 2147483647` (max 32-bit int) so it sits above everything in the consuming app.
-
----
-
-## Customizing the content path
-
-If your app can't serve files from `/.bottomlessmargaritas/application-documentation/`, pass a different `basePath`:
-
-```jsx
-<AppDocBar basePath="/docs/app" />
-```
-
-The bar will fetch `${basePath}/summary.md`, `${basePath}/technical-summary.md`, etc.
-
----
-
-## Publishing
-
-```bash
-# from the workspace root
-pnpm run publish:doc-bar
-```
-
-This runs `vite build` then publishes to npm with public access.
+Single dependency: [DOMPurify](https://github.com/cure53/DOMPurify) for HTML sanitization.

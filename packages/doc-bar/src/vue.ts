@@ -1,14 +1,15 @@
 import { defineComponent, h, onMounted, onUnmounted, ref, watch } from 'vue';
 import { DocBar } from './core/DocBar.ts';
+import { DEFAULT_OPTIONS } from './core/constants.ts';
 
 export default defineComponent({
   name: 'AppDocBar',
   props: {
-    basePath: { type: String, default: '/.bottomlessmargaritas/application-documentation' },
-    position: { type: String as () => 'top' | 'bottom', default: 'bottom' },
-    fixed: { type: Boolean, default: true },
-    appName: { type: String, default: '' },
-    theme: { type: String as () => 'dark' | 'light', default: 'dark' },
+    basePath: { type: String, default: DEFAULT_OPTIONS.basePath },
+    position: { type: String as () => 'top' | 'bottom', default: DEFAULT_OPTIONS.position },
+    fixed: { type: Boolean, default: DEFAULT_OPTIONS.fixed },
+    appName: { type: String, default: DEFAULT_OPTIONS.appName },
+    theme: { type: String as () => 'dark' | 'light', default: DEFAULT_OPTIONS.theme },
   },
   setup(props) {
     const containerRef = ref<HTMLDivElement | null>(null);

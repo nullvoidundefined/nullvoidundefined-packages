@@ -1,21 +1,16 @@
 import { useEffect, useRef } from 'react';
-import { DocBar } from './core/DocBar.ts';
+import { DocBar, type DocBarOptions } from './core/DocBar.ts';
+import { DEFAULT_OPTIONS } from './core/constants.ts';
 
-export interface AppDocBarProps {
-  basePath?: string;
-  position?: 'top' | 'bottom';
-  fixed?: boolean;
-  appName?: string;
-  theme?: 'dark' | 'light';
-}
+export type AppDocBarProps = DocBarOptions;
 
 export default function AppDocBar(props: AppDocBarProps) {
   const {
-    basePath = '/.bottomlessmargaritas/application-documentation',
-    position = 'bottom',
-    fixed = true,
-    appName = '',
-    theme = 'dark',
+    basePath = DEFAULT_OPTIONS.basePath,
+    position = DEFAULT_OPTIONS.position,
+    fixed = DEFAULT_OPTIONS.fixed,
+    appName = DEFAULT_OPTIONS.appName,
+    theme = DEFAULT_OPTIONS.theme,
   } = props;
 
   const containerRef = useRef<HTMLDivElement>(null);

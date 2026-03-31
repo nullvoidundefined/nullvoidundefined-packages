@@ -1,24 +1,19 @@
 import { Component, createEffect, onCleanup } from 'solid-js';
-import { DocBar } from './core/DocBar.ts';
+import { DocBar, type DocBarOptions } from './core/DocBar.ts';
+import { DEFAULT_OPTIONS } from './core/constants.ts';
 
-export interface AppDocBarProps {
-  basePath?: string;
-  position?: 'top' | 'bottom';
-  fixed?: boolean;
-  appName?: string;
-  theme?: 'dark' | 'light';
-}
+export type AppDocBarProps = DocBarOptions;
 
 const AppDocBar: Component<AppDocBarProps> = (props) => {
   let containerRef: HTMLDivElement | undefined;
 
   createEffect(() => {
     const instance = new DocBar({
-      basePath: props.basePath ?? '/.bottomlessmargaritas/application-documentation',
-      position: props.position ?? 'bottom',
-      fixed: props.fixed ?? true,
-      appName: props.appName ?? '',
-      theme: props.theme ?? 'dark',
+      basePath: props.basePath ?? DEFAULT_OPTIONS.basePath,
+      position: props.position ?? DEFAULT_OPTIONS.position,
+      fixed: props.fixed ?? DEFAULT_OPTIONS.fixed,
+      appName: props.appName ?? DEFAULT_OPTIONS.appName,
+      theme: props.theme ?? DEFAULT_OPTIONS.theme,
     });
     instance.mount(containerRef!);
     onCleanup(() => instance.destroy());

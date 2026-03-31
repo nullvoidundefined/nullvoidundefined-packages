@@ -1,12 +1,7 @@
 import DOMPurify from 'dompurify';
 import { el } from './dom.ts';
 import { PROMPTS, COMBINED_PROMPT } from './prompts.ts';
-
-export interface NavLink {
-  key: string;
-  label: string;
-  file: string;
-}
+import type { NavLink } from './DocBar.ts';
 
 type PromptReason = 'missing' | 'unversioned' | 'outdated';
 

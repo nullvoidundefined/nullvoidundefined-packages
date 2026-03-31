@@ -1,4 +1,5 @@
 import { DocBar } from './core/DocBar.ts';
+import { DEFAULT_OPTIONS } from './core/constants.ts';
 
 /**
  * <app-doc-bar> — a custom element wrapping DocBar.
@@ -40,11 +41,11 @@ class AppDocBarElement extends HTMLElement {
     const fixed = fixedAttr === null ? true : fixedAttr !== 'false';
 
     this.#instance = new DocBar({
-      basePath: this.getAttribute('base-path') ?? '/.bottomlessmargaritas/application-documentation',
-      position: (this.getAttribute('position') as 'top' | 'bottom') ?? 'bottom',
+      basePath: this.getAttribute('base-path') ?? DEFAULT_OPTIONS.basePath,
+      position: (this.getAttribute('position') as 'top' | 'bottom') ?? DEFAULT_OPTIONS.position,
       fixed,
-      appName: this.getAttribute('app-name') ?? '',
-      theme: (this.getAttribute('theme') as 'dark' | 'light') ?? 'dark',
+      appName: this.getAttribute('app-name') ?? DEFAULT_OPTIONS.appName,
+      theme: (this.getAttribute('theme') as 'dark' | 'light') ?? DEFAULT_OPTIONS.theme,
     });
     this.#instance.mount(this);
   }

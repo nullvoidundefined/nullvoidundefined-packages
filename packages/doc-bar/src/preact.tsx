@@ -1,22 +1,17 @@
 import { h, FunctionComponent } from 'preact';
 import { useEffect, useRef } from 'preact/hooks';
-import { DocBar } from './core/DocBar.ts';
+import { DocBar, type DocBarOptions } from './core/DocBar.ts';
+import { DEFAULT_OPTIONS } from './core/constants.ts';
 
-export interface AppDocBarProps {
-  basePath?: string;
-  position?: 'top' | 'bottom';
-  fixed?: boolean;
-  appName?: string;
-  theme?: 'dark' | 'light';
-}
+export type AppDocBarProps = DocBarOptions;
 
 const AppDocBar: FunctionComponent<AppDocBarProps> = (props) => {
   const {
-    basePath = '/.bottomlessmargaritas/application-documentation',
-    position = 'bottom',
-    fixed = true,
-    appName = '',
-    theme = 'dark',
+    basePath = DEFAULT_OPTIONS.basePath,
+    position = DEFAULT_OPTIONS.position,
+    fixed = DEFAULT_OPTIONS.fixed,
+    appName = DEFAULT_OPTIONS.appName,
+    theme = DEFAULT_OPTIONS.theme,
   } = props;
 
   const containerRef = useRef<HTMLDivElement>(null);

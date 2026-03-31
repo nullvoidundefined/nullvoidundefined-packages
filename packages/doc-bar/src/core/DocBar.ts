@@ -1,11 +1,11 @@
 import DOMPurify from 'dompurify';
+import { DEFAULT_OPTIONS } from './constants.ts';
 import { markdownToHtml } from './markdown.ts';
 import { parseQuiz } from './parseQuiz.ts';
 import { DOC_FORMAT_VERSION, parseDocVersion } from './prompts.ts';
 import { el, createOverlay, createPanel, createLoadingSkeleton } from './dom.ts';
 import { buildQuiz } from './QuizRenderer.ts';
 import { buildGenerateUI, buildPromptUI } from './PromptUI.ts';
-import type { NavLink } from './PromptUI.ts';
 
 export interface DocBarOptions {
   basePath?: string;
@@ -21,6 +21,12 @@ interface ResolvedOptions {
   fixed: boolean;
   appName: string;
   theme: 'dark' | 'light';
+}
+
+export interface NavLink {
+  key: string;
+  label: string;
+  file: string;
 }
 
 const NAV_LINKS: readonly NavLink[] = [
@@ -40,14 +46,7 @@ export class DocBar {
   private _docsAvailable = false;
 
   constructor(options: DocBarOptions = {}) {
-    this.options = {
-      basePath: '/.bottomlessmargaritas/application-documentation',
-      position: 'bottom',
-      fixed: true,
-      appName: '',
-      theme: 'dark',
-      ...options,
-    };
+    this.options = { ...DEFAULT_OPTIONS, ...options };
     this._onKeyDown = this._onKeyDown.bind(this);
   }
 

@@ -7,6 +7,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { DocBar } from './core/DocBar.ts';
+import { DEFAULT_OPTIONS } from './core/constants.ts';
 
 /**
  * Angular wrapper for AppDocBar.
@@ -39,11 +40,11 @@ import { DocBar } from './core/DocBar.ts';
   host: { style: 'display: block' },
 })
 export class AppDocBarComponent implements OnInit, OnChanges, OnDestroy {
-  @Input() basePath = '/.bottomlessmargaritas/application-documentation';
-  @Input() position = 'bottom';
-  @Input() fixed = true;
-  @Input() appName = '';
-  @Input() theme = 'dark';
+  @Input() basePath = DEFAULT_OPTIONS.basePath;
+  @Input() position: string = DEFAULT_OPTIONS.position;
+  @Input() fixed = DEFAULT_OPTIONS.fixed;
+  @Input() appName = DEFAULT_OPTIONS.appName;
+  @Input() theme: string = DEFAULT_OPTIONS.theme;
 
   private instance: InstanceType<typeof DocBar> | null = null;
 
