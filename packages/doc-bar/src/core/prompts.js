@@ -23,6 +23,37 @@ export const PROMPTS = {
   quiz: quizPrompt,
 };
 
+export const COMBINED_PROMPT = `# Generate Application Documentation
+
+Generate all four documentation files for this project. Read the entire codebase first, then produce each file following the specifications below. Each file must start with the version stamp: \`${VERSION_COMMENT}\`
+
+Output all four files clearly separated with the filename as a heading.
+
+---
+
+## File 1: summary.md
+
+${summaryPrompt}
+
+---
+
+## File 2: technical-summary.md
+
+${technicalSummaryPrompt}
+
+---
+
+## File 3: technical-overview.md
+
+${technicalOverviewPrompt}
+
+---
+
+## File 4: quiz.md
+
+${quizPrompt}
+`;
+
 /**
  * Parses the format version from the first line of a document.
  * Returns the version number, or null if the stamp is missing.

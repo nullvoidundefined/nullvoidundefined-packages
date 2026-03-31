@@ -833,6 +833,23 @@
   background: #15803d;
 }
 
+.doc-bar-prompt-file-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.doc-bar-prompt-file-item {
+  font-size: 0.8rem;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  color: #94a3b8;
+  background: #0f172a;
+  padding: 0.25rem 0.625rem;
+  border-radius: 6px;
+  border: 1px solid #334155;
+}
+
 .doc-bar-prompt-list {
   display: flex;
   flex-direction: column;

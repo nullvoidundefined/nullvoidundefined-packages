@@ -1,7 +1,7 @@
 import DOMPurify from 'dompurify';
 import { markdownToHtml } from './markdown.js';
 import { parseQuiz, sortByDifficulty, getDifficultyBreakdown } from './parseQuiz.js';
-import { DOC_FORMAT_VERSION, VERSION_COMMENT, PROMPTS, parseDocVersion } from './prompts.js';
+import { DOC_FORMAT_VERSION, VERSION_COMMENT, PROMPTS, COMBINED_PROMPT, parseDocVersion } from './prompts.js';
 
 const NAV_LINKS = [
   { key: 'summary', label: 'Summary', file: 'summary.md' },
@@ -505,7 +505,7 @@ export class DocBar {
     header.appendChild(title);
 
     const desc = el('p', 'doc-bar-prompt-desc');
-    desc.textContent = 'This project needs four documentation files. Copy each prompt below and paste it into your preferred AI assistant along with your project\'s source code to generate the documents.';
+    desc.textContent = 'Copy the generation prompt and paste it into your preferred AI assistant along with your project\'s source code. It will generate all four documentation files.';
     header.appendChild(desc);
     wrapper.appendChild(header);
 
@@ -515,38 +515,28 @@ export class DocBar {
     );
     wrapper.appendChild(pathInfo);
 
-    const list = el('div', 'doc-bar-prompt-list');
-
-    for (const { key, label, file } of NAV_LINKS) {
-      const prompt = PROMPTS[key];
-      const item = el('div', 'doc-bar-prompt-item');
-
-      const itemHeader = el('div', 'doc-bar-prompt-item-header');
-      const itemLabel = el('span', 'doc-bar-prompt-item-label');
-      itemLabel.textContent = label;
-      const itemFile = el('code', 'doc-bar-prompt-item-file');
-      itemFile.textContent = file;
-      itemHeader.appendChild(itemLabel);
-      itemHeader.appendChild(itemFile);
-      item.appendChild(itemHeader);
-
-      const copyBtn = el('button', 'doc-bar-prompt-copy-btn');
-      copyBtn.textContent = `Copy ${label} Prompt`;
-      copyBtn.addEventListener('click', () => {
-        navigator.clipboard.writeText(prompt).then(() => {
-          copyBtn.textContent = 'Copied!';
-          copyBtn.classList.add('doc-bar-prompt-copy-success');
-          setTimeout(() => {
-            copyBtn.textContent = `Copy ${label} Prompt`;
-            copyBtn.classList.remove('doc-bar-prompt-copy-success');
-          }, 2000);
-        });
-      });
-      item.appendChild(copyBtn);
-      list.appendChild(item);
+    const fileList = el('div', 'doc-bar-prompt-file-list');
+    for (const { file } of NAV_LINKS) {
+      const fileEl = el('code', 'doc-bar-prompt-file-item');
+      fileEl.textContent = file;
+      fileList.appendChild(fileEl);
     }
+    wrapper.appendChild(fileList);
 
-    wrapper.appendChild(list);
+    const copyBtn = el('button', 'doc-bar-prompt-copy-btn');
+    copyBtn.textContent = 'Copy Prompt to Clipboard';
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(COMBINED_PROMPT).then(() => {
+        copyBtn.textContent = 'Copied!';
+        copyBtn.classList.add('doc-bar-prompt-copy-success');
+        setTimeout(() => {
+          copyBtn.textContent = 'Copy Prompt to Clipboard';
+          copyBtn.classList.remove('doc-bar-prompt-copy-success');
+        }, 2000);
+      });
+    });
+    wrapper.appendChild(copyBtn);
+
     return wrapper;
   }
 
