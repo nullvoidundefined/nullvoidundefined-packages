@@ -8,6 +8,10 @@ This prompt defines how to generate the `technical-summary.md` file. The Technic
 
 The Technical Summary answers: **"How is this app built, and what are the key technical decisions?"** It is written for developers — engineers evaluating the project, teammates onboarding, or the original author returning after time away. It covers architecture, patterns, and decisions at a level between the non-technical Summary and the exhaustive Technical Overview.
 
+## CRITICAL: Privacy & Security
+
+**DO NOT** read, reference, or include content from `.env` files, credentials, API keys, secrets, PII, PHI, database dumps with real user data, or any file that could compromise security or privacy. If you encounter sensitive data, skip it entirely. Reference environment variables by name only (e.g., "requires `DATABASE_URL`") without revealing values.
+
 ## Target File
 
 ```

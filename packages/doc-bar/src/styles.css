@@ -833,6 +833,26 @@
   background: #15803d;
 }
 
+.doc-bar-prompt-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  background: rgba(234, 179, 8, 0.08);
+  border: 1px solid rgba(234, 179, 8, 0.25);
+  border-radius: 8px;
+  font-size: 0.825rem;
+  color: #fde68a;
+  line-height: 1.5;
+}
+
+.doc-bar-prompt-warning-icon {
+  flex-shrink: 0;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
 .doc-bar-prompt-file-list {
   display: flex;
   flex-wrap: wrap;

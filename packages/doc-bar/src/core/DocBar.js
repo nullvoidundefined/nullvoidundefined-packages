@@ -505,9 +505,18 @@ export class DocBar {
     header.appendChild(title);
 
     const desc = el('p', 'doc-bar-prompt-desc');
-    desc.textContent = 'Copy the generation prompt and paste it into your preferred AI assistant along with your project\'s source code. It will generate all four documentation files.';
+    desc.textContent = 'Copy the generation prompt and paste it into your preferred AI assistant. Your assistant will generate the docs based on your project\'s source code. Feel free to modify the resulting docs however you wish.';
     header.appendChild(desc);
     wrapper.appendChild(header);
+
+    const warning = el('div', 'doc-bar-prompt-warning');
+    const warningIcon = el('span', 'doc-bar-prompt-warning-icon');
+    warningIcon.textContent = '⚠';
+    warning.appendChild(warningIcon);
+    const warningText = el('span');
+    warningText.textContent = 'This tool is intended for personal projects. If you work within an organization, respect your organization\'s rules and requirements for sharing code with an LLM before using this prompt.';
+    warning.appendChild(warningText);
+    wrapper.appendChild(warning);
 
     const pathInfo = el('div', 'doc-bar-prompt-path');
     pathInfo.innerHTML = DOMPurify.sanitize(

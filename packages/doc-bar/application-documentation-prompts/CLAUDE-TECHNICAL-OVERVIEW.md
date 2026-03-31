@@ -14,6 +14,10 @@ Think of it this way:
 - **Technical Summary** → How the app is built (architectural overview)
 - **Technical Overview** → How every piece works (implementation reference)
 
+## CRITICAL: Privacy & Security
+
+**DO NOT** read, reference, or include content from `.env` files, credentials, API keys, secrets, PII, PHI, database dumps with real user data, or any file that could compromise security or privacy. If you encounter sensitive data, skip it entirely. Reference environment variables by name only (e.g., "requires `DATABASE_URL`") without revealing values.
+
 ## Target File
 
 ```

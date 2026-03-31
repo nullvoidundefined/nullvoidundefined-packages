@@ -8,6 +8,10 @@ This prompt defines how to generate the `quiz.md` file. The Quiz is the fourth l
 
 The Quiz tests the reader's understanding of the application — its architecture, tools, APIs, patterns, and concepts. It reinforces learning from the Summary, Technical Summary, and Technical Overview documents. A well-written quiz turns passive reading into active recall.
 
+## CRITICAL: Privacy & Security
+
+**DO NOT** read, reference, or include content from `.env` files, credentials, API keys, secrets, PII, PHI, database dumps with real user data, or any file that could compromise security or privacy. If you encounter sensitive data, skip it entirely. Never create quiz questions that reference real secrets, credentials, or personal data.
+
 ## Target File
 
 ```
@@ -95,11 +99,13 @@ Aim for a mix of difficulty levels:
 
 ### Question Count
 
-Generate **30–50 questions** per project. The quiz presents questions one at a time, ordered from easy to hard, with a start screen showing question count and difficulty breakdown, and a results screen with letter grade and feedback.
+Generate **20–100 questions** per project, scaling with the size and complexity of the codebase. The quiz presents questions one at a time, ordered from easy to hard, with a start screen showing question count and difficulty breakdown, and a results screen with letter grade and feedback.
 
-- Minimum: 30 questions (enough for variety across categories)
-- Sweet spot: 40 questions
-- Maximum: 50 questions (beyond this, quality tends to drop)
+- **Small projects** (< 10 source files, single-page apps, templates): 20–30 questions
+- **Medium projects** (10–50 source files, multiple features, API routes): 30–60 questions
+- **Large projects** (50+ source files, multiple services, complex architecture): 60–100 questions
+
+Use your judgment — a project with 5 files but deeply complex patterns may warrant 40 questions, while a project with 100 files of boilerplate may only need 50. The goal is comprehensive coverage without padding with low-quality filler.
 
 ### Writing Good Questions
 
@@ -188,7 +194,7 @@ This is bad because it names the correct answer in the clarification.
 
 ## Content Rules
 
-1. **30–50 questions** per quiz file
+1. **20–100 questions** per quiz file, scaled to codebase size
 2. **Every question must have all 4 options** — the parser drops questions with fewer
 3. **Every question must have a difficulty tag** — `@ easy`, `@ medium`, or `@ hard` on the line after the question text
 4. **Every question should have both clarification and explanation** — they're technically optional but should always be included

@@ -8,6 +8,10 @@ This prompt defines how to generate the `summary.md` file. The Summary is the fi
 
 The Summary document answers: **"What does this app do, and why does it matter?"** It is written for a broad audience — product managers, designers, stakeholders, or developers unfamiliar with the project. No code, no architecture diagrams, no implementation details.
 
+## CRITICAL: Privacy & Security
+
+**DO NOT** read, reference, or include content from `.env` files, credentials, API keys, secrets, PII, PHI, database dumps with real user data, or any file that could compromise security or privacy. If you encounter sensitive data, skip it entirely. Reference environment variables by name only (e.g., "requires `DATABASE_URL`") without revealing values.
+
 ## Target File
 
 ```

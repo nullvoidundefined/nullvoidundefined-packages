@@ -27,6 +27,17 @@ export const COMBINED_PROMPT = `# Generate Application Documentation
 
 Generate all four documentation files for this project. Read the entire codebase first, then produce each file following the specifications below. Each file must start with the version stamp: \`${VERSION_COMMENT}\`
 
+## CRITICAL: Privacy & Security
+
+**DO NOT** read, reference, or include content from:
+- \`.env\`, \`.env.local\`, \`.env.production\`, or any environment variable files
+- Files containing API keys, secrets, tokens, passwords, or credentials
+- Files containing personally identifiable information (PII) or protected health information (PHI)
+- Database dumps, seed files with real user data, or fixture files with real names/emails
+- Any file that could compromise the security or privacy of the project or its users
+
+If you encounter sensitive data while reading the codebase, **skip it entirely**. Document the existence of environment variables by name only (e.g., "requires \`DATABASE_URL\`") without revealing values. Never include real secrets, credentials, or personal data in any generated document.
+
 Output all four files clearly separated with the filename as a heading.
 
 ---
