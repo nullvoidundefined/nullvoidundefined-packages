@@ -49,9 +49,14 @@ export function markdownToHtml(md) {
   html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img alt="$1" src="$2">');
 
   // Links — anchor links scroll in-place, external links open new tab
+  // Block dangerous URI schemes (javascript:, data:, vbscript:) at the parser level
   html = html.replace(
     /\[([^\]]+)\]\(([^)]+)\)/g,
     (_, text, href) => {
+      const trimmed = href.trim().toLowerCase();
+      if (/^(javascript|data|vbscript):/.test(trimmed)) {
+        return text;
+      }
       if (href.startsWith('#')) {
         return `<a href="${href}" class="doc-bar-anchor-link">${text}</a>`;
       }

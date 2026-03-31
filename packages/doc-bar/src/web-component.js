@@ -6,22 +6,16 @@ import { DocBar } from './core/DocBar.js';
  * Works in any framework (Angular, Ember, plain HTML, etc.)
  * without framework-specific setup.
  *
- * Angular usage:
- *   // app.module.ts — add CUSTOM_ELEMENTS_SCHEMA
- *   import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
- *   @NgModule({ schemas: [CUSTOM_ELEMENTS_SCHEMA] })
- *
- *   // main.ts — register the element before bootstrapping
- *   import '@bottomlessmargaritas/doc-bar/web-component';
- *
- *   // template
- *   <app-doc-bar app-name="My App" theme="dark"></app-doc-bar>
- *
  * Attributes (kebab-case):
- *   base-path, position, fixed (boolean), app-name, theme
+ *   base-path, position, fixed (boolean — present=true, absent or "false"=false),
+ *   app-name, theme
+ *
+ * Usage:
+ *   <app-doc-bar app-name="My App" theme="dark"></app-doc-bar>
+ *   <app-doc-bar app-name="My App" fixed="false" position="top"></app-doc-bar>
  */
 class AppDocBarElement extends HTMLElement {
-  static observedAttributes = ['base-path', 'position', 'no-fixed', 'app-name', 'theme'];
+  static observedAttributes = ['base-path', 'position', 'fixed', 'app-name', 'theme'];
 
   #instance = null;
 
@@ -42,10 +36,13 @@ class AppDocBarElement extends HTMLElement {
   }
 
   #mount() {
+    const fixedAttr = this.getAttribute('fixed');
+    const fixed = fixedAttr === null ? true : fixedAttr !== 'false';
+
     this.#instance = new DocBar({
       basePath: this.getAttribute('base-path') ?? '/.bottomlessmargaritas/application-documentation',
       position: this.getAttribute('position') ?? 'bottom',
-      fixed: !this.hasAttribute('no-fixed'),
+      fixed,
       appName: this.getAttribute('app-name') ?? '',
       theme: this.getAttribute('theme') ?? 'dark',
     });
