@@ -1,20 +1,24 @@
 {
     "name": "@bottomlessmargaritas/doc-bar",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "description": "A nav bar component that links to app documentation modals (summary, technical summary, technical overview, quiz)",
     "type": "module",
     "main": "./dist/index.cjs.js",
     "module": "./dist/index.es.js",
+    "types": "./types/index.d.ts",
     "exports": {
         ".": {
+            "types": "./types/index.d.ts",
             "import": "./dist/index.es.js",
             "require": "./dist/index.cjs.js"
         },
         "./vanilla": {
+            "types": "./types/vanilla.d.ts",
             "import": "./dist/vanilla.es.js",
             "require": "./dist/vanilla.cjs.js"
         },
         "./vue": {
+            "types": "./types/vue.d.ts",
             "import": "./dist/vue.es.js",
             "require": "./dist/vue.cjs.js"
         },
@@ -23,15 +27,18 @@
             "require": "./dist/svelte.cjs.js"
         },
         "./solid": {
+            "types": "./types/solid.d.ts",
             "import": "./dist/solid.es.js",
             "require": "./dist/solid.cjs.js"
         },
         "./preact": {
+            "types": "./types/preact.d.ts",
             "import": "./dist/preact.es.js",
             "require": "./dist/preact.cjs.js"
         },
         "./angular": "./src/angular.ts",
         "./web-component": {
+            "types": "./types/web-component.d.ts",
             "import": "./dist/web-component.es.js",
             "require": "./dist/web-component.cjs.js"
         },
@@ -39,6 +46,7 @@
     },
     "files": [
         "dist/",
+        "types/",
         "src/angular.ts",
         "src/core/",
         "src/styles.css",
