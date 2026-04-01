@@ -35,8 +35,39 @@ This directory contains standardized architecture and coding conventions for ful
 - **LLM:** Anthropic Claude API
 - **Monorepo:** `packages/api`, `packages/worker`, `packages/web`, `packages/common`
 
+## Testing
+
+Every app must have tests at three levels:
+
+### Backend (Vitest + Supertest)
+- **Unit tests** for handlers, services, and utility functions
+- **Integration tests** for API routes using Supertest
+- Mock repositories with `vi.mock()`, never hit a real database in unit tests
+- Coverage target: 60% minimum (branches, functions, lines, statements)
+- Test files live alongside source: `handler.test.ts` next to `handler.ts`
+
+### Frontend (Vitest + React Testing Library)
+- **Component tests** for all interactive components
+- Use `@testing-library/react` — test behavior, not implementation
+- Mock API calls and stores in component tests
+- Test files live alongside source: `Component.test.tsx` next to `Component.tsx`
+
+### E2E (Playwright)
+- **Playwright tests** for all critical user flows
+- Tests live in `e2e/` at the project root
+- Cover: auth flows, core CRUD operations, navigation, error states
+- Run against a local dev server
+
+## UI Component Library
+
+- **Radix UI** for headless primitives (dialogs, dropdowns, toasts, toggles, select, etc.)
+- Style Radix components with SCSS modules — do not use Radix's default styling
+- Extract common patterns into `components/ui/` (Button, Select, Badge, Toggle, etc.)
+- All new interactive UI should use Radix primitives where applicable
+
 ## Conventions
 
 - **Commit after every task** — each completed task gets its own commit. Do not batch multiple tasks into a single commit.
 - **Branch per task** — every task gets its own branch off `main`. Once the task is complete and tests pass, merge into `main` and delete the branch.
+- **Always write tests** — no feature is complete without tests at the appropriate level.
 - Follow the convention files exactly — consistency across the codebase is more important than individual preference.

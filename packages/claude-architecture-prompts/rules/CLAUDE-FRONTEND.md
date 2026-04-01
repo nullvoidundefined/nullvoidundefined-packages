@@ -1,6 +1,6 @@
 # Frontend Conventions
 
-These rules apply to all frontend packages. Follow them exactly so every frontend reads as if the same author wrote it.
+These rules apply to all `web-client/` and frontend packages across every app in this portfolio. Follow them exactly so every frontend reads as if the same author wrote it.
 
 ---
 
@@ -11,6 +11,7 @@ These rules apply to all frontend packages. Follow them exactly so every fronten
 - **TypeScript** — strict mode, no `any`
 - **SCSS Modules** for all component styling (see `CLAUDE-STYLING.md`)
 - **TanStack Query** (React Query) for all server state — no raw `useEffect` + `fetch`
+- **Radix UI** for headless UI primitives (dialogs, dropdowns, toasts, toggles, select, etc.) — styled with SCSS modules
 - **No Tailwind** — all styling through SCSS modules and CSS custom properties
 
 ---
@@ -248,6 +249,90 @@ export const api = {
 | Line width | 100 chars | — |
 | Arrow parens | Always | `(x) => x` |
 | Bracket spacing | Yes | `{ x: 1 }` not `{x:1}` |
+
+---
+
+## Testing (Vitest + React Testing Library)
+
+- **Vitest** as the test runner (shared config with backend)
+- **@testing-library/react** for component testing — test behavior, not implementation
+- **@testing-library/user-event** for simulating user interactions
+- Test files live alongside source: `Component.test.tsx` next to `Component.tsx`
+- Mock API calls with `vi.mock('@/lib/api')` and stores with `vi.mock('@/stores/...')`
+- Test what users see and do, not internal state or props
+
+```typescript
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import MyComponent from './MyComponent';
+
+describe('MyComponent', () => {
+    it('shows success message after submit', async () => {
+        render(<MyComponent />);
+        await userEvent.click(screen.getByRole('button', { name: /submit/i }));
+        expect(screen.getByText(/success/i)).toBeInTheDocument();
+    });
+});
+```
+
+### Playwright (E2E)
+
+- **Playwright** for end-to-end testing of complete user flows
+- Tests live in `e2e/` at the project root
+- Test critical paths: auth, navigation, CRUD operations, error states
+- Use page object model for complex flows
+
+---
+
+## Radix UI
+
+Use **Radix UI primitives** for all interactive UI elements. Radix provides accessible, unstyled headless components. Style them with SCSS modules.
+
+**When to use Radix:**
+- Dropdowns, select menus, comboboxes → `@radix-ui/react-select`, `@radix-ui/react-dropdown-menu`
+- Dialogs, modals → `@radix-ui/react-dialog`
+- Toasts → `@radix-ui/react-toast`
+- Toggles, switches → `@radix-ui/react-toggle`, `@radix-ui/react-switch`
+- Tooltips → `@radix-ui/react-tooltip`
+- Tabs → `@radix-ui/react-tabs`
+
+**How to style:**
+```tsx
+import * as Select from '@radix-ui/react-select';
+import styles from './QuantitySelect.module.scss';
+
+export default function QuantitySelect({ value, onChange, min, max }: Props) {
+    return (
+        <Select.Root value={String(value)} onValueChange={(v) => onChange(Number(v))}>
+            <Select.Trigger className={styles.trigger}>
+                <Select.Value />
+                <Select.Icon className={styles.icon} />
+            </Select.Trigger>
+            <Select.Portal>
+                <Select.Content className={styles.content}>
+                    <Select.Viewport>
+                        {Array.from({ length: max - min + 1 }, (_, i) => min + i).map((n) => (
+                            <Select.Item key={n} value={String(n)} className={styles.item}>
+                                <Select.ItemText>{n}</Select.ItemText>
+                            </Select.Item>
+                        ))}
+                    </Select.Viewport>
+                </Select.Content>
+            </Select.Portal>
+        </Select.Root>
+    );
+}
+```
+
+**Component library structure:**
+```
+src/components/ui/
+├── Button/Button.tsx + Button.module.scss
+├── Select/Select.tsx + Select.module.scss
+├── Badge/Badge.tsx + Badge.module.scss
+├── Toggle/Toggle.tsx + Toggle.module.scss
+└── Toast/Toast.tsx + Toast.module.scss
+```
 
 ---
 

@@ -1,6 +1,6 @@
 # Styling Conventions
 
-These rules apply to all frontend styling. Follow them exactly so every UI reads as if the same author designed it.
+These rules apply to all frontend styling across every app in this portfolio. Follow them exactly so every UI reads as if the same author designed it.
 
 ---
 

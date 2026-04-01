@@ -1,6 +1,6 @@
 # Backend Conventions
 
-These rules apply to all backend and API packages. Follow them exactly so every backend reads as if the same author wrote it.
+These rules apply to all `server/` and API packages across every app in this portfolio. Follow them exactly so every backend reads as if the same author wrote it.
 
 ---
 
@@ -181,7 +181,7 @@ server.listen(port, () => {
 });
 ```
 
-This two-file pattern ensures secrets managed by a secret manager are populated in `process.env` before any API client is constructed.
+This two-file pattern ensures GCP-managed secrets (`ANTHROPIC_API_KEY`, `SESSION_SECRET`, etc.) are populated in `process.env` before the Anthropic SDK or any other API client is constructed.
 
 ---
 
@@ -648,3 +648,54 @@ DELETE /links/:id/tags/:tagId → remove from sub-resource
 | Trailing commas | All | `[a, b, c,]` |
 | Indentation | 4 spaces | — |
 | Line width | 100 chars | — |
+
+---
+
+## Testing (Vitest + Supertest)
+
+- **Vitest** as the test runner (configured in `vitest.config.ts`)
+- **Supertest** for HTTP integration tests (Express routes)
+- Coverage target: 60% minimum (branches, functions, lines, statements)
+- Test files live alongside source: `handler.test.ts` next to `handler.ts`
+
+### Test patterns
+
+**Handler tests** — mock the repository layer, test HTTP behavior:
+```typescript
+vi.mock('app/repositories/jobs/jobs.js');
+
+describe('GET /jobs', () => {
+    it('returns 200 with jobs list', async () => {
+        vi.mocked(jobsRepo.listJobs).mockResolvedValue([mockJob]);
+        const res = await request(app).get('/jobs').set('Cookie', sessionCookie);
+        expect(res.status).toBe(200);
+        expect(res.body.data).toHaveLength(1);
+    });
+});
+```
+
+**Middleware tests** — create minimal Express app, test behavior in isolation:
+```typescript
+const app = express();
+app.use(middlewareToTest);
+app.get('/test', (req, res) => res.json({ ok: true }));
+
+it('blocks unauthenticated requests', async () => {
+    const res = await request(app).get('/test');
+    expect(res.status).toBe(401);
+});
+```
+
+**Utility tests** — pure unit tests, no mocks needed:
+```typescript
+expect(parseIdParam('valid-uuid')).toBe('valid-uuid');
+expect(parseIdParam('not-a-uuid')).toBeNull();
+```
+
+### Test utilities
+
+Shared helpers live in `src/utils/tests/`:
+- `mockLogger.ts` — mocked Pino logger
+- `mockResult.ts` — creates fake `pg.QueryResult` objects
+- `uuids.ts` — test UUID generator
+- `responseHelpers.ts` — `expectError()`, `expectListResponse()` assertion helpers
